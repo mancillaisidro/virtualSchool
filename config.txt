@@ -1,0 +1,48 @@
+/////////////  database script /////////////  
+-- Database: virtualSchool
+
+-- DROP DATABASE IF EXISTS "virtualSchool";
+
+CREATE DATABASE "virtualSchool"
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.utf8'
+    LC_CTYPE = 'en_US.utf8'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+    -- Table: public.courses
+
+-- DROP TABLE IF EXISTS public.courses;
+
+CREATE TABLE IF NOT EXISTS public.courses
+(
+    course character varying COLLATE pg_catalog."default",
+    lesson character varying COLLATE pg_catalog."default",
+    "courseId" integer NOT NULL,
+    "lessonId" integer NOT NULL,
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    CONSTRAINT id_pk PRIMARY KEY (id),
+    CONSTRAINT id_constraint UNIQUE (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.courses
+    OWNER to postgres;
+
+
+/////////////  end database script /////////////  
+
+/////////////  database parameters /////////////  
+database conection:
+DB_USER=postgres
+DB_HOST=localhost
+DB_DATABASE=virtualSchool
+DB_PASSWORD=yourSecurePassword
+DB_PORT=5432
+
+/////////////  end database parameters  /////////////  
