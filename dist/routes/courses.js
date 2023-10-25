@@ -19,6 +19,7 @@ const config = require("./dbProductionConfig");
 // GET general para obtener todos los courses y lessons, devolverá un arreglo de objetos
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Ejemplo de consulta a la base de datos
+    console.log(config);
     const queryresponse = new pg_1.Pool(config);
     queryresponse.query('SELECT course, lesson, "courseId", "lessonId" FROM public.courses', (error, result) => {
         if (error) {

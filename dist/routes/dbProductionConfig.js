@@ -16,5 +16,8 @@ const pool = {
     ssl: {
         rejectUnauthorized: false, // Esto evita errores con certificados autofirmados, ¡ten cuidado en producción!
     },
+    connection: {
+        options: `project=${process.env.ENDPOINT_ID}`,
+    },
 };
 module.exports = pool;
