@@ -14,7 +14,7 @@ const pool = {
     password: process.env.PGPASSWORD,
     port: parseInt(process.env.DB_PORT || "5432"),
     ssl: {
-        rejectUnauthorized: false, // Esto evita errores con certificados autofirmados, ¡ten cuidado en producción!
+        sslmode: 'require', // Esto evita errores con certificados autofirmados, ¡ten cuidado en producción!
     }
 };
 module.exports = pool;
