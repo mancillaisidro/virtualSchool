@@ -12,9 +12,9 @@ const pool = {
     host: process.env.PGHOST,
     database: process.env.PGDATABASE,
     password: process.env.PGPASSWORD,
-    port: parseInt(process.env.DB_PORT || "5432"),
+    port: 5432,
     ssl: {
-        sslmode: 'require', // Esto evita errores con certificados autofirmados, ¡ten cuidado en producción!
+        sslmode: 'require', // Establece sslmode en 'require'
     }
 };
 module.exports = pool;
