@@ -7,7 +7,7 @@ const pool = {
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
-  port: parseInt(process.env.DB_PORT || "5432"),
+  port: 5432,
   ssl: {
     sslmode: 'require', // Establece sslmode en 'require'
   }
