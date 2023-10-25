@@ -15,9 +15,6 @@ const pool = {
     port: parseInt(process.env.DB_PORT || "5432"),
     ssl: {
         rejectUnauthorized: false, // Esto evita errores con certificados autofirmados, ¡ten cuidado en producción!
-    },
-    connection: {
-        options: `project=${process.env.ENDPOINT_ID}`,
-    },
+    }
 };
 module.exports = pool;
