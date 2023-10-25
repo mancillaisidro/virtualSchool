@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const pg_1 = require("pg");
 const app = express_1.default.Router();
-const config = require("./dbconfig");
+const config = require("./dbProductionConfig");
 // GET general para obtener todos los courses y lessons, devolverá un arreglo de objetos
-app.get("", (req, res) => {
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Ejemplo de consulta a la base de datos
-    const pool = new pg_1.Pool(config);
-    pool.query('SELECT course, lesson, "courseId", "lessonId" FROM public.courses', (error, result) => {
+    const queryresponse = new pg_1.Pool(config);
+    queryresponse.query('SELECT course, lesson, "courseId", "lessonId" FROM public.courses', (error, result) => {
         if (error) {
             console.error("Error en la consulta:", error);
             res.status(500).json({ error: "Error en la consulta" });
@@ -29,7 +29,7 @@ app.get("", (req, res) => {
             res.json(result.rows);
         }
     });
-});
+}));
 // Ruta POST para crear un nuevo course, se le debe de enviar un objeto como el siguiente:
 // {"courseId": 1009, "lessonId": 100, "courseName": "math", "lessonName": "calculus" }
 app.post("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,7 +65,7 @@ app.get("/lesson/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(500).json({ error: "Error al obtener el registro" });
     }
 }));
-// Ruta para obtener un lesson por su ID, se le debe de mandar un id(del tipo int) como parametro 
+// Ruta para obtener un lesson por su ID, se le debe de mandar un id(del tipo int) como parametro
 app.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -114,7 +114,10 @@ app.put("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, values);
         if (result.rows.length === 0) {
-            res.status(404).json({ message: "Registro no encontrado", parametersReceived: values });
+            res.status(404).json({
+                message: "Registro no encontrado",
+                parametersReceived: values,
+            });
         }
         else {
             res.json(result.rows[0]);

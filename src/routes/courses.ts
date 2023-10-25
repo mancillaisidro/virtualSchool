@@ -1,13 +1,14 @@
 import express, { Request, Response } from "express";
 import { Pool } from "pg";
 const app = express.Router();
-const config = require("./dbconfig");
+const config = require("./dbProductionConfig");
 
 // GET general para obtener todos los courses y lessons, devolverá un arreglo de objetos
-app.get("", (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
   // Ejemplo de consulta a la base de datos
-  const pool = new Pool(config);
-  pool.query(
+
+  const queryresponse = new Pool(config);
+  queryresponse.query(
     'SELECT course, lesson, "courseId", "lessonId" FROM public.courses',
     (error, result) => {
       if (error) {
@@ -55,7 +56,7 @@ app.get("/lesson/:id", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al obtener el registro" });
   }
 });
-// Ruta para obtener un lesson por su ID, se le debe de mandar un id(del tipo int) como parametro 
+// Ruta para obtener un lesson por su ID, se le debe de mandar un id(del tipo int) como parametro
 app.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -98,7 +99,7 @@ app.delete("/:id", async (req: Request, res: Response) => {
 
 app.put("", async (req: Request, res: Response) => {
   try {
-    const { courseName, lessonName, lessonId, courseId} = req.body;
+    const { courseName, lessonName, lessonId, courseId } = req.body;
     const query =
       'UPDATE public.courses SET course = $1, lesson = $2, "lessonId" = $3, "courseId" = $4 WHERE "courseId" = $4 RETURNING *';
     const values = [courseName, lessonName, lessonId, courseId];
@@ -106,7 +107,10 @@ app.put("", async (req: Request, res: Response) => {
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
-      res.status(404).json({ message: "Registro no encontrado", parametersReceived: values });
+      res.status(404).json({
+        message: "Registro no encontrado",
+        parametersReceived: values,
+      });
     } else {
       res.json(result.rows[0]);
     }
