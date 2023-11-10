@@ -18,7 +18,7 @@ app.use("/virtualschool/lessons", require("./routes/lessons"));
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
 app.use("/login", require("./routes/login"));
 // definiendo ruta de inicio  
-app.get("", (res) => {
+app.get("", (req, res) => {
     res.json("Server Running");
 });
 app.listen(port, () => {

@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import express, { Response , Request} from "express";
 import bodyParser from "body-parser";
 
 const app = express();
@@ -15,7 +15,7 @@ app.use("/virtualschool/lessons", require("./routes/lessons"));
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
 app.use("/login", require("./routes/login"));
 // definiendo ruta de inicio  
-app.get("", (res: Response) => {
+app.get("", (req: Request, res: Response ) => {
   res.json("Server Running");
 });
 
