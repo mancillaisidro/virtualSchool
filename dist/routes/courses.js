@@ -13,115 +13,80 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const pg_1 = require("pg");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = express_1.default.Router();
-const config = require("./dbProductionConfig");
-// GET general para obtener todos los courses y lessons, devolverá un arreglo de objetos
-app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Ejemplo de consulta a la base de datos
-    console.log(config);
-    const queryresponse = new pg_1.Pool(config);
-    queryresponse.query('SELECT course, lesson, "courseId", "lessonId" FROM public.courses', (error, result) => {
-        if (error) {
-            console.error("Error en la consulta:", error);
-            res.status(500).json({ error: "Error en la consulta" });
+const { authenticateToken } = require("./../models/auth");
+const { createCourse, getCourse, getAllCourses, deleteCourse, updateCourse, } = require("./../models/courses");
+// GET general para obtener todos los courses, devolverá un arreglo de objetos
+app.get("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { result, status } = yield getAllCourses();
+        if (status) {
+            res.json(result);
         }
         else {
-            res.json(result.rows);
+            res.status(500).json({ error: "Error al ejecutar la consulta" });
         }
-    });
+    }
+    catch (error) {
+        console.error("Error al mostrar los cursos:", error);
+        res.status(500).json({ error: "Error al mostrar los cursos" });
+    }
 }));
 // Ruta POST para crear un nuevo course, se le debe de enviar un objeto como el siguiente:
-// {"courseId": 1009, "lessonId": 100, "courseName": "math", "lessonName": "calculus" }
+// {"courseId": 1009, "courseName": "math" }
 app.post("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { course, lesson, courseId, lessonId } = req.body;
-        const query = 'INSERT INTO public.courses (course, lesson, "courseId", "lessonId") VALUES ($1, $2, $3, $4) RETURNING *';
-        const values = [course, lesson, courseId, lessonId];
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, values);
-        res.json(result.rows[0]);
+        const { course, courseId } = req.body;
+        const { result, status } = yield createCourse(course, courseId);
+        if (status) {
+            res.json(result);
+        }
+        else {
+            res.status(500).json({ error: "Error al ejecutar la consulta" });
+        }
     }
     catch (error) {
         console.error("Error al crear un registro:", error);
         res.status(500).json({ error: "Error al crear un registro" });
     }
 }));
-// Ruta para obtener un lesson por su ID, se le debe de mandar un id (del tipo int) como parametro
-app.get("/lesson/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const query = 'SELECT * FROM public.courses WHERE "lessonId" = $1';
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, [id]);
-        if (result.rows.length === 0) {
-            res.status(404).json({ message: "Registro no encontrado" });
-        }
-        else {
-            res.json(result.rows[0]);
-        }
+// Ruta para obtener un course por su ID, se le debe de mandar un id(del tipo int) como parametro
+app.get("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { result, status } = yield getCourse(id);
+    if (status) {
+        res.json(result);
     }
-    catch (error) {
-        console.error("Error al obtener el registro:", error);
-        res.status(500).json({ error: "Error al obtener el registro" });
-    }
-}));
-// Ruta para obtener un lesson por su ID, se le debe de mandar un id(del tipo int) como parametro
-app.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const query = 'SELECT * FROM public.courses WHERE "courseId" = $1';
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, [id]);
-        if (result.rows.length === 0) {
-            res.status(404).json({ message: "Registro no encontrado" });
-        }
-        else {
-            res.json(result.rows[0]);
-        }
-    }
-    catch (error) {
-        console.error("Error al obtener el registro:", error);
-        res.status(500).json({ error: "Error al obtener el registro" });
+    else {
+        res.status(500).json({ error: "Error al ejecutar la consulta" });
     }
 }));
 // Ruta para eliminar un registro por su courseId, el cual se debe de mandar como parametro (del tipo entero)
+// NOTA: al borrar un course se eliminaran todas las lessons que pertenecen a este curso.
 app.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const query = 'DELETE FROM public.courses WHERE "courseId" = $1 RETURNING *';
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, [id]);
-        if (result.rows.length === 0) {
-            res.status(404).json({ message: "Course not found" });
-        }
-        else {
-            res.json({ message: "Registro eliminado correctamente" });
-        }
+    const { id } = req.params;
+    const { message, status } = yield deleteCourse(id);
+    if (status) {
+        res.json(message);
     }
-    catch (error) {
-        console.error("Error al eliminar el registro:", error);
-        res.status(500).json({ error: "Error al eliminar el registro" });
+    else {
+        res.status(500).json({ error: "Error al ejecutar la consulta" });
     }
 }));
 // Ruta para editar un registro, se debe de mandar un objeto del tipo:
-// {"courseId": 1009, "lessonId": 100, "courseName": "math", "lessonName": "calculus" }
+// {"course": "math" , "courseId": 1009, }
 // el courseId es el campo clave que se utiliara para saber cual course va a ser el editado
 app.put("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { courseName, lessonName, lessonId, courseId } = req.body;
-        const query = 'UPDATE public.courses SET course = $1, lesson = $2, "lessonId" = $3, "courseId" = $4 WHERE "courseId" = $4 RETURNING *';
-        const values = [courseName, lessonName, lessonId, courseId];
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, values);
-        if (result.rows.length === 0) {
-            res.status(404).json({
-                message: "Registro no encontrado",
-                parametersReceived: values,
-            });
+        const { course, courseId } = req.body;
+        const { message, result, status, parametersReceived } = yield updateCourse(course, courseId);
+        if (status) {
+            parametersReceived ? res.status(404).json({ message, parametersReceived }) : res.json(result);
         }
         else {
-            res.json(result.rows[0]);
+            res.status(500).json({ error: "500. Error al actualizar el registro" });
         }
     }
     catch (error) {
