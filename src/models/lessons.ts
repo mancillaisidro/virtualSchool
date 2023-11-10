@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 
 const createLesson = async (lessonName: string, lessonId: number, courseId: number) => {
   try {

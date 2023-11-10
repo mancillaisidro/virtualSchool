@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 const getAllCourses = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const pool = new pg_1.Pool(config);
