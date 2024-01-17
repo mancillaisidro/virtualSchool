@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
-const config = require("./../routes/dbProductionConfig");
+const config = require("./../routes/dbconfig");
 const createLesson = (lessonName, lessonId, courseId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = 'INSERT INTO public.courses (lesson, "lessonId", "courseId") VALUES ($1, $2, $3) RETURNING *';

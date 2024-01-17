@@ -18,6 +18,7 @@ dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
 const { createCourse, getCourse, getAllCourses, deleteCourse, updateCourse, } = require("./../models/courses");
+const { createCourseMail, deleteCourseMail, updateCourseMail, } = require("./../models/sendCoursesMail");
 // GET general para obtener todos los courses, devolverá un arreglo de objetos
 app.get("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -36,11 +37,12 @@ app.get("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, 
 }));
 // Ruta POST para crear un nuevo course, se le debe de enviar un objeto como el siguiente:
 // {"courseId": 1009, "courseName": "math" }
-app.post("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { course, courseId } = req.body;
         const { result, status } = yield createCourse(course, courseId);
         if (status) {
+            yield createCourseMail("Isidro Servin", course, courseId);
             res.json(result);
         }
         else {
@@ -65,10 +67,11 @@ app.get("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 
 }));
 // Ruta para eliminar un registro por su courseId, el cual se debe de mandar como parametro (del tipo entero)
 // NOTA: al borrar un course se eliminaran todas las lessons que pertenecen a este curso.
-app.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { message, status } = yield deleteCourse(id);
     if (status) {
+        yield deleteCourseMail("Isidro Servin", id);
         res.json(message);
     }
     else {
@@ -78,12 +81,19 @@ app.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 // Ruta para editar un registro, se debe de mandar un objeto del tipo:
 // {"course": "math" , "courseId": 1009, }
 // el courseId es el campo clave que se utiliara para saber cual course va a ser el editado
-app.put("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.put("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { course, courseId } = req.body;
         const { message, result, status, parametersReceived } = yield updateCourse(course, courseId);
         if (status) {
-            parametersReceived ? res.status(404).json({ message, parametersReceived }) : res.json(result);
+            if (parametersReceived) {
+                res.status(404).json({ message, parametersReceived });
+            }
+            else {
+                updateCourseMail("Isidro Servin", result);
+                res.json(result);
+            }
+            //parametersReceived ? res.status(404).json({ message, parametersReceived}) : res.json(result)
         }
         else {
             res.status(500).json({ error: "500. Error al actualizar el registro" });

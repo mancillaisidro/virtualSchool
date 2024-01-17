@@ -85,7 +85,7 @@ app.put("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 }));
 // Ruta para eliminar un registro por su lessonId, el cual se debe de mandar como parametro (del tipo entero)
-app.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { message, status } = yield deleteLesson(id);
     if (status) {
