@@ -63,7 +63,7 @@ const updateLesson = (lessonName, lessonId, courseId) => __awaiter(void 0, void 
             return {
                 message: "Registro no encontrado",
                 parametersReceived: values,
-                status: 1
+                status: 1,
             };
         }
         else {
@@ -92,4 +92,83 @@ const deleteLesson = (id) => __awaiter(void 0, void 0, void 0, function* () {
         return { error: "Error al eliminar el registro", status: 0 };
     }
 });
-module.exports = { createLesson, getLesson, getAllLessons, updateLesson, deleteLesson };
+const checkIfLessonExist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const id = (_a = req.body.lessonId) !== null && _a !== void 0 ? _a : 0;
+    if (id === null || id === "" || id === undefined)
+        res.status(401).json({ message: "lessonId is null, undefined or empty" });
+    try {
+        console.log(req.body);
+        console.log(req.query);
+        console.log(req.params);
+        const query = 'SELECT lesson, "lessonId" FROM public.courses WHERE "lessonId" = $1';
+        const pool = new pg_1.Pool(config);
+        const result = yield pool.query(query, [id]);
+        if (result.rows.length === 0) {
+            res.status(401).json("lessonId not found");
+        }
+        else {
+            next();
+        }
+    }
+    catch (error) {
+        console.error("Error al obtener el registro:", error);
+        res
+            .status(401)
+            .json("Database connection error, please go to the terminal to see more details.");
+    }
+});
+function getFileName(req, res, next) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const id = (_a = req.query.lessonId) !== null && _a !== void 0 ? _a : 0;
+        if (id === null || id === "" || id === undefined)
+            res.status(401).json({ message: "lessonId is null, undefined or empty" });
+        try {
+            const query = 'SELECT "lessonId", "pathFile" FROM public.courses WHERE "lessonId" = $1';
+            const pool = new pg_1.Pool(config);
+            const result = yield pool.query(query, [id]);
+            if (result.rows.length === 0) {
+                res.status(401).json("lessonId not found");
+            }
+            else {
+                req.params.pathFile = result.rows[0].pathFile;
+                next();
+            }
+        }
+        catch (error) {
+            console.error("Error al obtener el registro:", error);
+            res
+                .status(401)
+                .json("Database connection error, please go to the terminal to see more details.");
+        }
+    });
+}
+const savePathInDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const query = 'UPDATE public.courses SET "pathFile" = $1 WHERE "lessonId" = $2 RETURNING *';
+        const values = [req.body.pathToDB, req.body.lessonId];
+        const pool = new pg_1.Pool(config);
+        const result = yield pool.query(query, values);
+        if (result.rows.length === 0) {
+            res.json("Registro no encontrado para actualizar");
+        }
+        else {
+            next();
+        }
+    }
+    catch (error) {
+        console.error("Error al actualizar el registro:", error);
+        res.json("Database error, go to the terminal to see more info about this error.");
+    }
+});
+module.exports = {
+    createLesson,
+    getLesson,
+    getAllLessons,
+    updateLesson,
+    deleteLesson,
+    checkIfLessonExist,
+    savePathInDB,
+    getFileName
+};

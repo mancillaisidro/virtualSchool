@@ -1,6 +1,8 @@
 import { Request } from "express";
 import multer from "multer";
 import { extname, join } from "path";
+import { Pool } from "pg";
+const config = require("./../routes/dbconfig")
 const MIMETYPES = ["image/jpeg","image/png"];
 
 //multer configuration
@@ -9,7 +11,9 @@ const upload = multer({
     destination: join(__dirname, "./../uploads"),
     filename: async (req: Request, file: Express.Multer.File, cb: any) => {
       const fileExtension = extname(file.originalname);
-      const filename = file.originalname.split(fileExtension)[0];
+      const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g,"");
+      console.log("Nombre del archivo que se intenta subir al server: ",filename);
+      req.body.pathToDB = `${filename}-${Date.now()}${fileExtension}`;
       cb(null, `${filename}-${Date.now()}${fileExtension}`);
     },
   }),
@@ -24,5 +28,7 @@ const upload = multer({
     fieldSize: 10_000_000,
   },
 });
+
+
 // exportamos nuestra funcion
   module.exports = upload;

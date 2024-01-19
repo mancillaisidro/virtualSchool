@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const path_1 = require("path");
+const config = require("./../routes/dbconfig");
 const MIMETYPES = ["image/jpeg", "image/png"];
 //multer configuration
 const upload = (0, multer_1.default)({
@@ -21,7 +22,9 @@ const upload = (0, multer_1.default)({
         destination: (0, path_1.join)(__dirname, "./../uploads"),
         filename: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
             const fileExtension = (0, path_1.extname)(file.originalname);
-            const filename = file.originalname.split(fileExtension)[0];
+            const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g, "");
+            console.log("Nombre del archivo que se intenta subir al server: ", filename);
+            req.body.pathToDB = `${filename}-${Date.now()}${fileExtension}`;
             cb(null, `${filename}-${Date.now()}${fileExtension}`);
         }),
     }),
