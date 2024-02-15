@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37,13 +28,13 @@ app.use("/login", require("./routes/login"));
 // definiendo ruta para subir archivo al servidor
 app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
-app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
+// app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 // definiendo ruta para formulario de subir archivo DE PRUEBA SOLAMENTE
-app.get("/uploadLessonFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //sended ? res.json('Correo Enviado') : res.json('Hubo un error')
-    res.render("uploadFileForm.ejs");
-}));
-app.use("/getCourses", express_1.default.static(path_1.default.join(__dirname, "./uploads")));
+// app.get("/uploadLessonFile", async (req: Request, res: Response) => {
+//   //sended ? res.json('Correo Enviado') : res.json('Hubo un error')
+//   res.render("uploadFileForm.ejs");
+// });
+// app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
 app.listen(port, () => {
     console.log(`Express Server listening on your localhost, port:  ${port}`);
 });
