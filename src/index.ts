@@ -23,7 +23,7 @@ app.use("/virtualschool/lessons", require("./routes/lessons"));
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
 app.use("/login", require("./routes/login"));
 // definiendo ruta para subir archivo al servidor
-app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
+// app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 
