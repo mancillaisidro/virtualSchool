@@ -1,7 +1,12 @@
 import express, { Request, Response } from "express";
 const app = express.Router();
 const jwt = require("jsonwebtoken");
-
+// definimos el tipo de objeto usuario
+interface User{
+  username: string,
+  password: string,
+  userType: string
+}
 // POST para mandar un token al usuario
 app.post("", async (req: Request, res: Response) => {
   const username = req.body.username;

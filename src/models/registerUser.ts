@@ -1,15 +1,13 @@
 import { Pool } from "pg";
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 
-interface Course{
-  courseName: string,
-  courseId: number
-}
-
-interface Lesson{
-  lessonName: string,
-  lessonId: number
-}
+// we define the object type User
+interface User{
+    mail: string,
+    name: string,
+    password: string,
+    userType: string
+  }
 
 const getAllCourses = async () => {
   try {
@@ -23,27 +21,27 @@ const getAllCourses = async () => {
   }
 };
 
-const createCourse = async (courseName: string, courseId: number) => {
+export const createUser = async (mail: string, name: string, userType: string, password: string) => {
   try {
     const query =
-      'INSERT INTO public.courses (course, "courseId") VALUES ($1, $2) RETURNING *';
-    const values = [courseName, courseId];
+      'INSERT INTO public.user (mail, name, user_type, password) VALUES ($1, $2, $3, $4) RETURNING *';
+    const values = [mail, name, userType, password];
     const pool = new Pool(config);
     const result = await pool.query(query, values);
     return { result: result.rows[0], status: 1 };
   } catch (error) {
-    console.error("Error al crear un course:", error);
-    return { error: "Error al crear un registro", status: 0 };
+    console.error("Error trying to register a new user: ", error);
+    return { error: "Error trying to register a new user", status: 0 };
   }
 };
 
-const getCourse = async (id: number) => {
+export const getUser = async (id: number) => {
   try {
-    const query = 'SELECT * FROM public.courses WHERE "courseId" = $1';
+    const query = 'SELECT * FROM public.user WHERE id = $1';
     const pool = new Pool(config);
     const result = await pool.query(query, [id]);
     if (result.rows.length === 0) {
-      return { result: "Row not exist", status: 1 };
+      return { result: "User not exist", status: 1 };
     } else {
       return { result: result.rows[0], status: 1 };
     }
@@ -93,4 +91,4 @@ const deleteCourse = async (id: number) => {
   }
 };
 
-module.exports = { createCourse, getCourse, getAllCourses, updateCourse, deleteCourse };
+module.exports = { createUser, getUser, getAllCourses, updateCourse, deleteCourse };

@@ -56,7 +56,7 @@ app.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Ruta para editar un lesson, se debe de mandar un objeto del tipo:
-// {"lesson": "math" , "lessonId": 1009, }
+// {"lesson": "math" , "lessonId": 1009 }
 // el courseId es el campo clave que se utiliara para saber cual course va a ser el editado
 app.put("", authenticateToken , async (req: Request, res: Response) => {
   try {
