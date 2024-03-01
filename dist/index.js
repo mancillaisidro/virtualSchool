@@ -1,15 +1,27 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
+const cors = require("cors");
 const nodemailer = require("nodemailer");
 const dotenv_1 = __importDefault(require("dotenv"));
 // Carga las variables de entorno desde .env
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+// Habilitamos CORS
+app.use(cors());
 // Configurar body-parser para analizar las solicitudes JSON
 app.use(express_1.default.json({ limit: "100mb" })); //al parecer erste siempre se necesita
 app.use(express_1.default.urlencoded({ limit: '50mb', extended: true }));
@@ -27,6 +39,8 @@ app.use("/register", require('./routes/register'));
 // definiendo ruta para mandar un token al usuario
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
 app.use("/login", require("./routes/login"));
+// route for receive message 
+app.use("/sendMessage", require("./routes/sendMessage"));
 // definiendo ruta para subir archivo al servidor
 // app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
@@ -37,6 +51,9 @@ app.use("/login", require("./routes/login"));
 //   res.render("uploadFileForm.ejs");
 // });
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
+app.post("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send("Hola");
+}));
 app.listen(port, () => {
     console.log(`Express Server listening on your localhost, port:  ${port}`);
 });

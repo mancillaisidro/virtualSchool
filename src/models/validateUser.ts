@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 
 export const validateUser = (req: Request, res: Response, next: NextFunction) => {
-
     const userSchema = Joi.object({
-        mail: Joi.string().email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}}).required(),
+        email: Joi.string().email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}}).required(),
         name: Joi.string().alphanum().min(3).max(25).required(),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         repeat_password: Joi.ref('password'),
@@ -17,6 +16,7 @@ export const validateUser = (req: Request, res: Response, next: NextFunction) =>
         }
         next()
 };
+
 export const validateId = (req: Request, res: Response, next: NextFunction) => {
 
   const idSchema = Joi.object({
@@ -30,4 +30,19 @@ export const validateId = (req: Request, res: Response, next: NextFunction) => {
       next()
 };
 
-module.exports = { validateUser, validateId };
+export const validateLogin = (req: Request, res: Response, next: NextFunction) => {
+  const userSchema = Joi.object({
+      email: Joi.string().email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}}).required(),
+      password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+      repeat_password: Joi.ref('password'),
+      userType: Joi.string().required()
+  })
+      const { error} = userSchema.validate(req.body, { abortEarly: false });
+      if(error){
+        const errorMessage = error.details.map((err: { message: any; }) => err.message).join(', ');
+        return res.status(400).json({ error: errorMessage });
+      }
+      next()
+};
+
+module.exports = { validateUser, validateId, validateLogin };

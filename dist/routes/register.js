@@ -38,7 +38,7 @@ app.post("", validateUser_1.validateUser, (req, res) => __awaiter(void 0, void 0
 app.get("/:id", validateUser_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const numericId = parseInt(id, 10);
-    const { result, status } = yield (0, registerUser_1.getUser)(numericId);
+    const { result, status } = yield (0, registerUser_1.getUserById)(numericId);
     if (status) {
         res.json(result);
     }

@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 const app = express.Router();
 import {validateUser, validateId} from "./../models/validateUser"
-import {createUser, getUser } from "./../models/registerUser"
+import {createUser, getUserById } from "./../models/registerUser"
 // we define the object type User
 interface User{
     mail: string,
@@ -27,11 +27,12 @@ app.post("", validateUser,  async (req: Request, res: Response) => {
       }
     
 });
+
 // Route to get user info by "id", we need to send the "id" (type integer) as a parameter for the GET request
-app.get("/:id",validateId,  async (req: Request, res: Response) => {
+app.get("/:id", validateId,  async (req: Request, res: Response) => {
     const {id} = req.params;
     const numericId = parseInt(id, 10);
-    const { result, status } = await getUser(numericId);
+    const { result, status } = await getUserById(numericId);
     if (status) {
       res.json(result);
     } else {
