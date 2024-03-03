@@ -19,8 +19,8 @@ const registerUser_1 = require("./../models/registerUser");
 // POST to receive a new user
 app.post("", validateUser_1.validateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { mail, name, userType, password } = req.body;
-        const { result, status } = yield (0, registerUser_1.createUser)(mail, name, userType, password);
+        const { email, name, userType, password } = req.body;
+        const { result, status } = yield (0, registerUser_1.createUser)(email, name, userType, password);
         if (status) {
             // await createCourseMail("Isidro Servin", course, courseId);
             res.json(result);

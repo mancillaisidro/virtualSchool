@@ -13,8 +13,8 @@ interface User{
 // POST to receive a new user
 app.post("", validateUser,  async (req: Request, res: Response) => {
     try {
-        const { mail, name, userType, password } = req.body;
-        const { result, status } = await createUser(mail, name, userType, password);
+        const { email, name, userType, password } = req.body;
+        const { result, status } = await createUser(email, name, userType, password);
         if (status) {
           // await createCourseMail("Isidro Servin", course, courseId);
           res.json(result);
