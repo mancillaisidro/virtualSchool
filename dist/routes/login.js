@@ -30,7 +30,9 @@ app.post("", validateUser_1.validateLogin, (req, res) => __awaiter(void 0, void 
         const { result, status } = yield (0, registerUser_1.getUserAuth)(user);
         if (status) {
             // await createCourseMail("Isidro Servin", course, courseId);
-            res.json({ id: result.id, email: result.mail, name: result.name });
+            const user = { email: result.mail };
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            res.json({ id: result.id, email: result.mail, name: result.name, accessToken });
         }
         else {
             res.status(500).json({ error: "Error executing the query" });

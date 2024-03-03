@@ -22,7 +22,9 @@ app.post("", validateLogin, async (req: Request<{}, {}, UserLogin>, res: Respons
     const { result, status } = await getUserAuth(user);
     if (status) {
       // await createCourseMail("Isidro Servin", course, courseId);
-      res.json({ id: result.id, email: result.mail, name: result.name});
+      const user = { email: result.mail };
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+      res.json({ id: result.id, email: result.mail, name: result.name, accessToken});
     } else {
       res.status(500).json({ error: "Error executing the query" });
     }
