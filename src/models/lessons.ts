@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { NextFunction, Request, Response } from "express";
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 
 const createLesson = async (
   lessonName: string,

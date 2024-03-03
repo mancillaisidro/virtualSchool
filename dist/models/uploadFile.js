@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const path_1 = require("path");
-const config = require("./../routes/dbconfig");
 const MIMETYPES = ["image/jpeg", "image/png"];
 //multer configuration
 const upload = (0, multer_1.default)({

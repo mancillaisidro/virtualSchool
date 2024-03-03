@@ -1,8 +1,6 @@
 import { Request } from "express";
 import multer from "multer";
 import { extname, join } from "path";
-import { Pool } from "pg";
-const config = require("./../routes/dbconfig")
 const MIMETYPES = ["image/jpeg","image/png"];
 
 //multer configuration
