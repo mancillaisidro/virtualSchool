@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const path_1 = require("path");
-const MIMETYPES = ["image/jpeg", "image/png"];
+const MIMETYPES = ["image/jpeg", "image/png", "application/pdf", "application/vnd.openxmlformats-officedocument.presentationml.presentation"];
 //multer configuration
 const upload = (0, multer_1.default)({
     storage: multer_1.default.diskStorage({

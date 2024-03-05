@@ -25,6 +25,12 @@ app.use("/virtualschool/lessons", require("./routes/lessons"));
 // route for REGISTER new Users
 app.use("/register", require('./routes/register'));
 
+// route for EXAMS
+app.use("/exam", require('./routes/exam'));
+
+// route for assignments
+app.use("/assignment", require('./routes/assignment'))
+
 // definiendo ruta para mandar un token al usuario
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
 app.use("/login", require("./routes/login"));

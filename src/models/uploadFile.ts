@@ -1,7 +1,7 @@
 import { Request } from "express";
 import multer from "multer";
 import { extname, join } from "path";
-const MIMETYPES = ["image/jpeg","image/png"];
+const MIMETYPES = ["image/jpeg","image/png","application/pdf", "application/vnd.openxmlformats-officedocument.presentationml.presentation"];
 
 //multer configuration
 const upload = multer({
