@@ -11,8 +11,9 @@ const {
     deleteAssignment
 } = require("./../models/assignmentModel");
 import { Assignment } from "../models/assignmentModel";
+import { validateAssignment, validateAssignmenttoUpdate, validateId } from "../models/validateAssignments";
 // GET general para obtener todos los assignments, devolverá un arreglo de objetos
-app.get("/byCreator/:id", authenticateToken, async (req: Request, res: Response) => {
+app.get("/byCreator/:id", authenticateToken, validateId, async (req: Request, res: Response) => {
   try {
     const {id} = req.params
     const { result, status } = await getAllAssignmentsByUserId(id);
@@ -29,7 +30,7 @@ app.get("/byCreator/:id", authenticateToken, async (req: Request, res: Response)
 
 // Ruta POST to create A NEW EXAM, se le debe de enviar un objeto como el siguiente:
 // {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300"}
-app.post("", authenticateToken, async (req: Request, res: Response) => {
+app.post("", authenticateToken, validateAssignment, async (req: Request, res: Response) => {
   try {
     const examencito: Assignment = req.body
     const { result, status } = await createAssignment(examencito);
@@ -45,7 +46,7 @@ app.post("", authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
-app.get("/:id", authenticateToken, async (req: Request, res: Response) => {
+app.get("/:id", authenticateToken, validateId, async (req: Request, res: Response) => {
   const { id } = req.params;
   const { result, status } = await getAssignmentById(id);
   if (status) {
@@ -56,7 +57,7 @@ app.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Ruta para eliminar un examen por su examId, el cual se debe de mandar como parametro (del tipo entero)
-app.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
+app.delete("/:id", authenticateToken, validateId, async (req: Request, res: Response) => {
   const { id } = req.params;
   const { message, status } = await deleteAssignment(id);
   if (status) {
@@ -69,7 +70,7 @@ app.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
 // Ruta para editar un registro, se debe de mandar un objeto del tipo:
 // {"description":"mi second exam","dueDate":"2024-03-08 11:59:00","title":"Mi segundaa chambaaa","userId":"1","examId":"8"}
 // el examId es el campo clave que se utiliara para saber cual course va a ser el editado
-app.put("", authenticateToken, async (req: Request, res: Response) => {
+app.put("", authenticateToken, validateAssignmenttoUpdate, async (req: Request, res: Response) => {
   try {
     const examencito: Assignment = req.body
     const { message, result, status, parametersReceived } = await updateAssignmentById(

@@ -18,8 +18,9 @@ dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
 const { getAllAssignmentsByUserId, createAssignment, getAssignmentById, updateAssignmentById, deleteAssignment } = require("./../models/assignmentModel");
+const validateAssignments_1 = require("../models/validateAssignments");
 // GET general para obtener todos los assignments, devolverá un arreglo de objetos
-app.get("/byCreator/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/byCreator/:id", authenticateToken, validateAssignments_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const { result, status } = yield getAllAssignmentsByUserId(id);
@@ -37,7 +38,7 @@ app.get("/byCreator/:id", authenticateToken, (req, res) => __awaiter(void 0, voi
 }));
 // Ruta POST to create A NEW EXAM, se le debe de enviar un objeto como el siguiente:
 // {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300"}
-app.post("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", authenticateToken, validateAssignments_1.validateAssignment, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const examencito = req.body;
         const { result, status } = yield createAssignment(examencito);
@@ -54,7 +55,7 @@ app.post("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 }));
 // Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
-app.get("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/:id", authenticateToken, validateAssignments_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { result, status } = yield getAssignmentById(id);
     if (status) {
@@ -65,7 +66,7 @@ app.get("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 
     }
 }));
 // Ruta para eliminar un examen por su examId, el cual se debe de mandar como parametro (del tipo entero)
-app.delete("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete("/:id", authenticateToken, validateAssignments_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { message, status } = yield deleteAssignment(id);
     if (status) {
@@ -78,7 +79,7 @@ app.delete("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, vo
 // Ruta para editar un registro, se debe de mandar un objeto del tipo:
 // {"description":"mi second exam","dueDate":"2024-03-08 11:59:00","title":"Mi segundaa chambaaa","userId":"1","examId":"8"}
 // el examId es el campo clave que se utiliara para saber cual course va a ser el editado
-app.put("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.put("", authenticateToken, validateAssignments_1.validateAssignmenttoUpdate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const examencito = req.body;
         const { message, result, status, parametersReceived } = yield updateAssignmentById(examencito);

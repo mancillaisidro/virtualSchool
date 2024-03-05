@@ -8,7 +8,6 @@ export interface Exam{
     description: string,
     dueDate: string,
     userId: number,
-
 }
 // method to get all the exams created by an Instructor
 const getAllExamsByUserId = async (id:number) => {
