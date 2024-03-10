@@ -18,18 +18,24 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // definiendo ruta para los courses
-app.use("/virtualschool/courses", require("./routes/courses"));
+// app.use("/virtualschool/courses", require("./routes/courses"));
 // definiendo ruta para las lessons
-app.use("/virtualschool/lessons", require("./routes/lessons"));
+// app.use("/virtualschool/lessons", require("./routes/lessons"));
 
 // route for REGISTER new Users
 app.use("/register", require('./routes/register'));
+
+// definiendo ruta para los courses
+app.use("/virtualschool/course", require("./routes/course"));
 
 // route for EXAMS
 app.use("/exam", require('./routes/exam'));
 
 // route for assignments
-app.use("/assignment", require('./routes/assignment'))
+app.use("/assignment", require('./routes/assignment'));
+
+// route to enroll a Course
+app.use('/studentEnrollment', require('./routes/studentEnrollment'));
 
 // definiendo ruta para mandar un token al usuario
 // para obtener un token hay que enviar un objeto a esta url del tipo { username: "tuNombre"}
