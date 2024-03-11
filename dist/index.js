@@ -61,8 +61,8 @@ app.use("/sendMessage", require("./routes/sendMessage"));
 //   res.render("uploadFileForm.ejs");
 // });
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
-app.post("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send("Hola");
+app.get("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send("Hi there, I'm working! :)");
 }));
 app.listen(port, () => {
     console.log(`Express Server listening on your localhost, port:  ${port}`);

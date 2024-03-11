@@ -46,14 +46,24 @@ const getAllLessonsByUserId = (id) => __awaiter(void 0, void 0, void 0, function
     }
 });
 const createLesson = (lesson) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
     try {
+        yield pool.query('BEGIN');
         const query = 'INSERT INTO public.lesson (title, user_id, course_id, link) VALUES ($1, $2, $3, $4) RETURNING *';
         const values = [lesson.title, lesson.userId, lesson.courseId, lesson.link];
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, values);
-        return { result: result.rows[0], status: 1 };
+        const resultQuery = yield pool.query(query, values);
+        const query2 = 'SELECT user_id FROM public.student_course WHERE course_id = $1';
+        const resultQuery2 = yield pool.query(query2, [lesson.courseId]);
+        for (const element of resultQuery2.rows) {
+            const query3 = 'INSERT INTO public.student_lesson(user_id, lesson_id, status) VALUES ( $1, $2, $3) returning *;';
+            const values = [element.user_id, resultQuery.rows[0].lesson_id, 0]; // Zero indicates not viewed
+            yield pool.query(query3, values);
+        }
+        yield pool.query('COMMIT');
+        return { result: resultQuery.rows[0], status: 1 };
     }
     catch (error) {
+        yield pool.query('ROLLBACK');
         console.error("Error al crear un lesson:", error);
         return { error: "Error al crear un registro", status: 0 };
     }
@@ -77,7 +87,7 @@ const getLessonById = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const updateLesson = (lesson) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'UPDATE public.lesson SET title = $1, link = $2 WHERE lesson_id = $3 RETURNING title, link';
+        const query = 'UPDATE public.lesson SET title = $1, link = $2 WHERE lesson_id = $3 RETURNING title, link;';
         const values = [lesson.title, lesson.link, lesson.lessonId];
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, values);

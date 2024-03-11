@@ -35,14 +35,27 @@ const getAllLessonsByUserId = async (id:number) => {
   };
 
 const createLesson = async (lesson: Lesson) => {
+    const pool = new Pool(config);
   try {
+    await pool.query('BEGIN');
     const query =
       'INSERT INTO public.lesson (title, user_id, course_id, link) VALUES ($1, $2, $3, $4) RETURNING *';
     const values = [lesson.title, lesson.userId, lesson.courseId, lesson.link];
-    const pool = new Pool(config);
-    const result = await pool.query(query, values);
-    return { result: result.rows[0], status: 1 };
+    const resultQuery = await pool.query(query, values);
+
+    const query2 = 
+      'SELECT user_id FROM public.student_course WHERE course_id = $1';
+    const resultQuery2 = await pool.query(query2, [lesson.courseId]);
+    for (const element of resultQuery2.rows) {
+        const query3 =
+      'INSERT INTO public.student_lesson(user_id, lesson_id, status) VALUES ( $1, $2, $3) returning *;';
+      const values = [element.user_id, resultQuery.rows[0].lesson_id , 0]; // Zero indicates not viewed
+      await pool.query(query3, values);
+      }
+      await pool.query('COMMIT');
+    return { result: resultQuery.rows[0], status: 1 };
   } catch (error) {
+    await pool.query('ROLLBACK');
     console.error("Error al crear un lesson:", error);
     return { error: "Error al crear un registro", status: 0 };
   }
@@ -67,7 +80,7 @@ const getLessonById = async (id: number) => {
 const updateLesson = async (lesson: Lesson) => {
   try {
     const query =
-      'UPDATE public.lesson SET title = $1, link = $2 WHERE lesson_id = $3 RETURNING title, link';
+      'UPDATE public.lesson SET title = $1, link = $2 WHERE lesson_id = $3 RETURNING title, link;';
     const values = [lesson.title, lesson.link, lesson.lessonId];
     const pool = new Pool(config);
     const result = await pool.query(query, values);

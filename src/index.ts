@@ -60,8 +60,8 @@ app.use("/sendMessage",require("./routes/sendMessage"));
 
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
 
-app.post("", async (req: Request, res: Response) => {
-    res.send("Hola");
+app.get("", async (req: Request, res: Response) => {
+    res.send("Hi there, I'm working! :)");
   });
 app.listen(port, () => {
   console.log(`Express Server listening on your localhost, port:  ${port}`);

@@ -14,7 +14,7 @@ const {
 } = require("./../models/lessonModel");
 
 // GET to get ALL the Lessons.
-app.get("/", authenticateToken, async (req: Request, res: Response) => {
+app.get("", authenticateToken, async (req: Request, res: Response) => {
   try {
     const { result, status } = await getAllLessonsByCourseId();
     if (status) {
