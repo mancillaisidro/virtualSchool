@@ -28,6 +28,9 @@ app.use("/register", require('./routes/register'));
 // definiendo ruta para los courses
 app.use("/virtualschool/course", require("./routes/course"));
 
+// definiendo ruta para los lessons
+app.use("/virtualschool/lesson", require("./routes/lesson"));
+
 // route for EXAMS
 app.use("/exam", require('./routes/exam'));
 
