@@ -30,7 +30,7 @@ app.get("", authenticateToken, async (req: Request, res: Response) => {
 
 // Ruta POST para crear un nuevo lesson, se le debe de enviar un objeto como el siguiente:
 // POST to create a new lesson, a object type Couse should be sent in the body
-// {"userId":1,"title":"English"}
+// {"userId":1,"title":"English", "link": "google.com", "courseId": 102}
 app.post("", authenticateToken, validateLesson, async (req: Request, res: Response) => {
   try {
     const lesson: Lesson = req.body;

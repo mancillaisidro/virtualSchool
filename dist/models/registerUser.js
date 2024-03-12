@@ -14,7 +14,7 @@ const pg_1 = require("pg");
 const config = require("./../routes/dbProductionConfig");
 const createUser = (email, name, userType, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'INSERT INTO public.user (mail, name, user_type, password) VALUES ($1, $2, $3, $4) RETURNING *';
+        const query = 'INSERT INTO public.user (mail, name, user_type, password, last_login) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *';
         const values = [email, name, userType, password];
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, values);
@@ -28,7 +28,7 @@ const createUser = (email, name, userType, password) => __awaiter(void 0, void 0
 exports.createUser = createUser;
 const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'SELECT * FROM public.user WHERE id = $1';
+        const query = 'SELECT id, mail, name, user_type, password, last_login FROM public.user WHERE id = $1';
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, [id]);
         if (result.rows.length === 0) {
@@ -46,7 +46,7 @@ const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getUserById = getUserById;
 const getUserAuth = (user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'SELECT * FROM public.user WHERE mail = $1 AND password = $2 AND user_type = $3';
+        const query = 'SELECT id, mail, name, user_type, last_login FROM public.user WHERE mail = $1 AND password = $2 AND user_type = $3';
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, [user.email, user.password, user.userType]);
         if (result.rows.length === 0) {

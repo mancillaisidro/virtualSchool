@@ -37,7 +37,7 @@ app.get("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, f
 }));
 // Ruta POST para crear un nuevo lesson, se le debe de enviar un objeto como el siguiente:
 // POST to create a new lesson, a object type Couse should be sent in the body
-// {"userId":1,"title":"English"}
+// {"userId":1,"title":"English", "link": "google.com", "courseId": 102}
 app.post("", authenticateToken, validateLesson_1.validateLesson, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const lesson = req.body;

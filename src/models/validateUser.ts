@@ -7,7 +7,7 @@ export const validateUser = (req: Request, res: Response, next: NextFunction) =>
         name: Joi.string().alphanum().min(3).max(25).required(),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         repeat_password: Joi.ref('password'),
-        userType: Joi.string().required()
+        userType: Joi.number().integer().min(0).required()
     })
         const { error} = userSchema.validate(req.body, { abortEarly: false });
         if(error){
@@ -20,7 +20,7 @@ export const validateUser = (req: Request, res: Response, next: NextFunction) =>
 export const validateId = (req: Request, res: Response, next: NextFunction) => {
 
   const idSchema = Joi.object({
-      id: Joi.number().required().min(0).max(100)
+      id: Joi.number().required().min(0).max(100).integer()
   })
       const { error} = idSchema.validate(req.params, { abortEarly: false });
       if(error){
@@ -35,7 +35,7 @@ export const validateLogin = (req: Request, res: Response, next: NextFunction) =
       email: Joi.string().email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}}).required(),
       password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
       repeat_password: Joi.ref('password'),
-      userType: Joi.string().required()
+      userType: Joi.number().min(0).integer().required()
   })
       const { error} = userSchema.validate(req.body, { abortEarly: false });
       if(error){

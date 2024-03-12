@@ -7,7 +7,7 @@ import { getUserAuth } from "../models/registerUser";
 interface UserLogin{
   email: string,
   password: string,
-  userType: string
+  userType: number
 }
 // POST para mandar un token al usuario
 /*app.post("", async (req: Request, res: Response) => {

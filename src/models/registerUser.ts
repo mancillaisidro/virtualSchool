@@ -5,13 +5,13 @@ const config = require("./../routes/dbProductionConfig");
 interface User{
     email: string,
     password: string,
-    userType: string
+    userType: number
   }
 
-export const createUser = async (email: string, name: string, userType: string, password: string) => {
+export const createUser = async (email: string, name: string, userType: number, password: string) => {
   try {
     const query =
-      'INSERT INTO public.user (mail, name, user_type, password) VALUES ($1, $2, $3, $4) RETURNING *';
+      'INSERT INTO public.user (mail, name, user_type, password, last_login) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *';
     const values = [email, name, userType, password];
     const pool = new Pool(config);
     const result = await pool.query(query, values);
@@ -24,7 +24,7 @@ export const createUser = async (email: string, name: string, userType: string, 
 
 export const getUserById = async (id: number) => {
   try {
-    const query = 'SELECT * FROM public.user WHERE id = $1';
+    const query = 'SELECT id, mail, name, user_type, password, last_login FROM public.user WHERE id = $1';
     const pool = new Pool(config);
     const result = await pool.query(query, [id]);
     if (result.rows.length === 0) {
@@ -40,7 +40,7 @@ export const getUserById = async (id: number) => {
 
 export const getUserAuth = async (user: User) => {
   try {
-    const query = 'SELECT * FROM public.user WHERE mail = $1 AND password = $2 AND user_type = $3';
+    const query = 'SELECT id, mail, name, user_type, last_login FROM public.user WHERE mail = $1 AND password = $2 AND user_type = $3';
     const pool = new Pool(config);
     const result = await pool.query(query, [user.email, user.password, user.userType]);
     if (result.rows.length === 0) {
