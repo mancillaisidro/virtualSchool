@@ -16,6 +16,8 @@ const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const config = require("./routes/dbProductionConfig");
+const pg_1 = require("pg");
 const dotenv_1 = __importDefault(require("dotenv"));
 // Carga las variables de entorno desde .env
 dotenv_1.default.config();
@@ -42,6 +44,8 @@ app.use("/virtualschool/course", require("./routes/course"));
 app.use("/virtualschool/lesson", require("./routes/lesson"));
 // route for EXAMS
 app.use("/exam", require('./routes/exam'));
+// route for receive exam submitions
+app.use("/examSubmition", require('./routes/examSubmit'));
 // route for assignments
 app.use("/assignment", require('./routes/assignment'));
 // route to enroll a Course
@@ -51,6 +55,32 @@ app.use('/studentEnrollment', require('./routes/studentEnrollment'));
 app.use("/login", require("./routes/login"));
 // route for receive message 
 app.use("/sendMessage", require("./routes/sendMessage"));
+app.post("/json", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
+    try {
+        const query = 'INSERT INTO public.json_patrick (json_patrick) VALUES ($1) RETURNING json_patrick, id;';
+        const values = [JSON.stringify(req.body.jsonPatrick)];
+        const result = yield pool.query(query, values);
+        return res.json(result.rows[0]);
+    }
+    catch (error) {
+        console.error("Error trying to register a new json: ", error);
+        return res.status(500).json('something went wrong');
+    }
+}));
+app.get("/json/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
+    try {
+        const query = 'SELECT json_patrick, id FROM public.json_patrick WHERE id = $1;';
+        const values = [req.params.id];
+        const result = yield pool.query(query, values);
+        return res.json(result.rows[0]);
+    }
+    catch (error) {
+        console.error("Error trying to register a new json: ", error);
+        return res.status(500).json('something went wrong');
+    }
+}));
 // definiendo ruta para subir archivo al servidor
 // app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor

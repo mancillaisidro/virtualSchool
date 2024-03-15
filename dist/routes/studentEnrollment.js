@@ -37,7 +37,7 @@ app.post("/course", validateCourseEnrollment_1.validateStudentCourse, (req, res)
         res.status(500).json({ error: "Error trying to create a user" });
     }
 }));
-// Route to get user info by "id", we need to send the "id" (type integer) as a parameter for the GET request
+// Route to get the courses that the user is enrolled in, we need to send the "id" (type integer) as a parameter for the GET request
 app.get("/courses/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const numericId = parseInt(id, 10);

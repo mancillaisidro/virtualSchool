@@ -2,6 +2,8 @@ import express, { Response, Request } from "express";
 import path from "path";
 const cors = require("cors")
 const nodemailer = require("nodemailer");
+const config = require("./routes/dbProductionConfig");
+import { Pool } from "pg";
 import dotenv from "dotenv";
 // Carga las variables de entorno desde .env
 dotenv.config();
@@ -33,6 +35,8 @@ app.use("/virtualschool/lesson", require("./routes/lesson"));
 
 // route for EXAMS
 app.use("/exam", require('./routes/exam'));
+// route for receive exam submitions
+app.use("/examSubmition", require('./routes/examSubmit'));
 
 // route for assignments
 app.use("/assignment", require('./routes/assignment'));
@@ -46,6 +50,33 @@ app.use("/login", require("./routes/login"));
 
 // route for receive message 
 app.use("/sendMessage",require("./routes/sendMessage"));
+
+app.post("/json",async (req: Request, res: Response) => {
+  const pool = new Pool(config);
+  try {
+    const query =
+      'INSERT INTO public.json_patrick (json_patrick) VALUES ($1) RETURNING json_patrick, id;';
+    const values = [JSON.stringify(req.body.jsonPatrick)];
+    const result = await pool.query(query, values);
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error trying to register a new json: ", error);
+    return res.status(500).json('something went wrong');
+  }
+});
+app.get("/json/:id",async (req: Request, res: Response) => {
+  const pool = new Pool(config);
+  try {
+    const query =
+      'SELECT json_patrick, id FROM public.json_patrick WHERE id = $1;';
+    const values = [req.params.id];
+    const result = await pool.query(query, values);
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error trying to register a new json: ", error);
+    return res.status(500).json('something went wrong');
+  }
+})
 
 // definiendo ruta para subir archivo al servidor
 // app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));

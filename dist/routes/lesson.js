@@ -20,9 +20,10 @@ const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
 const { getLessonById, getAllLessonsByUserId, createLesson, getAllLessonsByCourseId, deleteLesson, updateLesson } = require("./../models/lessonModel");
 // GET to get ALL the Lessons.
-app.get("", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/:id", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { result, status } = yield getAllLessonsByCourseId();
+        const { id } = req.params;
+        const { result, status } = yield getAllLessonsByCourseId(id);
         if (status) {
             res.json(result);
         }
