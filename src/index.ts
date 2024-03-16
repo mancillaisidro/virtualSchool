@@ -78,6 +78,25 @@ app.get("/json/:id",async (req: Request, res: Response) => {
   }
 })
 
+app.put("/json",async (req: Request, res: Response) => {
+  const pool = new Pool(config);
+  try {
+    const query =
+      'UPDATE public.json_patrick SET json_patrick = $1 WHERE id = $2 returning json_patrick;';
+    const values = [JSON.stringify(req.body.jsonPatrick), req.body.jsonId];
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) {
+      res.json('Row not found')
+    } else {
+      res.json(result.rows[0])
+      
+    }
+  } catch (error) {
+    console.error("Error trying to register a new json: ", error);
+    return res.status(500).json('something went wrong');
+  }
+})
+
 // definiendo ruta para subir archivo al servidor
 // app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor

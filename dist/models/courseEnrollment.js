@@ -26,6 +26,14 @@ const createCourseEnrollment = (studentToEnroll) => __awaiter(void 0, void 0, vo
             const values = [studentToEnroll.userId, element.lesson_id, 0]; // Zero indicates not viewed
             yield pool.query(query3, values);
         }
+        /*const query3 = 'SELECT lesson_id FROM public.lesson WHERE course_id = $1;';
+        const resultQuery3  = await pool.query(query3, [studentToEnroll.courseId])
+        for (const element of resultQuery3.rows) {
+          const query4 =
+        'INSERT INTO public.student_lesson(user_id, lesson_id, status) VALUES ( $1, $2, $3) returning *;';
+        const values = [studentToEnroll.userId, element.lesson_id , 0]; // Zero indicates not viewed
+        await pool.query(query4, values);
+        }*/
         yield pool.query('COMMIT');
         return { result: resultQuery.rows[0], status: 1 };
     }
@@ -36,7 +44,6 @@ const createCourseEnrollment = (studentToEnroll) => __awaiter(void 0, void 0, vo
     }
 });
 exports.createCourseEnrollment = createCourseEnrollment;
-// 
 const updateStudentCourseEnrollment = (studentEnrolledUpdate) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = 'UPDATE public.student_course SET status = $1 WHERE user_id = $2 AND course_id = $3 RETURNING *;';
