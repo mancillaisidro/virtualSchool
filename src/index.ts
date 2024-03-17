@@ -92,7 +92,7 @@ app.put("/json",async (req: Request, res: Response) => {
       
     }
   } catch (error) {
-    console.error("Error trying to register a new json: ", error);
+    console.error("Error trying to update: ", error);
     return res.status(500).json('something went wrong');
   }
 })

@@ -28,7 +28,7 @@ app.post("/course", validateStudentCourse,  async (req: Request, res: Response) 
       }
     
 });
-// Route to get user info by "id", we need to send the "id" (type integer) as a parameter for the GET request
+// Route to get the courses that the user is enrolled in, we need to send the "id" (type integer) as a parameter for the GET request
 app.get("/courses/:id",  async (req: Request, res: Response) => {
     const {id} = req.params;
     const numericId = parseInt(id, 10);

@@ -30,15 +30,26 @@ const getAllAssignmentsByUserId = (id) => __awaiter(void 0, void 0, void 0, func
     }
 });
 const createAssignment = (assignment) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
     try {
-        const query = 'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        yield pool.query('BEGIN');
+        const query = 'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
         const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title];
-        const pool = new pg_1.Pool(config);
-        const result = yield pool.query(query, values);
-        return { result: result.rows[0], status: 1 };
+        const resultQuery = yield pool.query(query, values);
+        const query2 = 'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
+        const lessonIdValue = [resultQuery.rows[0].lesson_id];
+        const resultQuery2 = yield pool.query(query2, lessonIdValue);
+        for (const element of resultQuery2.rows) {
+            const query3 = 'INSERT INTO public.student_assignment(user_id, assignment_id, status) VALUES ( $1, $2, $3) returning *;';
+            const values = [element.user_id, resultQuery.rows[0].assignment_id, 0];
+            yield pool.query(query3, values);
+        }
+        yield pool.query('COMMIT');
+        return { result: resultQuery.rows[0], status: 1 };
     }
     catch (error) {
-        console.error("Error al crear un assignment:", error);
+        console.error("Error while executing a transaction in createAssignment function:", error);
+        yield pool.query('ROLLBACK');
         return { error: "Error al crear un registro en tabla assignment", status: 0 };
     }
 });

@@ -28,17 +28,32 @@ const getAllAssignmentsByUserId = async (id:number) => {
 };
 
 const createAssignment = async (assignment: Assignment) => {
+  const pool = new Pool(config);
+  
   try {
+    await pool.query('BEGIN');
     const query =
-      'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+      'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
     const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title];
-    const pool = new Pool(config);
-    const result = await pool.query(query, values);
-    return { result: result.rows[0], status: 1 };
+    const resultQuery = await pool.query(query, values);
+    const query2 =
+      'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
+      const lessonIdValue = [resultQuery.rows[0].lesson_id]
+      const resultQuery2 = await pool.query(query2, lessonIdValue);
+      for (const element of resultQuery2.rows) {
+        const query3 =
+      'INSERT INTO public.student_assignment(user_id, assignment_id, status) VALUES ( $1, $2, $3) returning *;';
+      const values = [element.user_id, resultQuery.rows[0].assignment_id, 0]
+      await pool.query(query3, values);
+    }
+      await pool.query('COMMIT');
+      return { result: resultQuery.rows[0], status: 1 };
   } catch (error) {
-    console.error("Error al crear un assignment:", error);
+    console.error("Error while executing a transaction in createAssignment function:", error);
+    await pool.query('ROLLBACK');
     return { error: "Error al crear un registro en tabla assignment", status: 0 };
   }
+
 };
 
 const getAssignmentById = async (id: number) => {

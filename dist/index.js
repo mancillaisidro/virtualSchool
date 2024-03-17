@@ -95,7 +95,7 @@ app.put("/json", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        console.error("Error trying to register a new json: ", error);
+        console.error("Error trying to update: ", error);
         return res.status(500).json('something went wrong');
     }
 }));
