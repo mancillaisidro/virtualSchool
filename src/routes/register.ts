@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 const app = express.Router();
 import {validateUser, validateId} from "./../models/validateUser"
 import {createUser, getUserById } from "./../models/registerUser"
+import { emailExist } from "../models/userModel";
 // we define the object type User
 interface User{
     mail: string,
@@ -11,7 +12,7 @@ interface User{
   }
   
 // POST to receive a new user
-app.post("", validateUser,  async (req: Request, res: Response) => {
+app.post("", validateUser, emailExist,  async (req: Request, res: Response) => {
     try {
         const { email, name, userType, password } = req.body;
         const { result, status } = await createUser(email, name, userType, password);

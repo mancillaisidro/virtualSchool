@@ -18,6 +18,7 @@ const validateCourse_1 = require("../models/validateCourse");
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
+const userModel_1 = require("../models/userModel");
 const { getCourseById, getAllCoursesByUserId, createCourse, getAllCourses, deleteCourse, updateCourse } = require("./../models/courseModel");
 // GET to get ALL the courses.
 app.get("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,12 +42,18 @@ app.get("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, 
 app.post("", authenticateToken, validateCourse_1.validateCourse, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const course = req.body;
-        const { result, status } = yield createCourse(course);
-        if (status) {
-            res.json(result);
+        const { isAllowed } = yield (0, userModel_1.isUserAuthTo)("createCourse", course.userId);
+        if (isAllowed) {
+            const { result, status } = yield createCourse(course);
+            if (status) {
+                res.json(result);
+            }
+            else {
+                res.status(500).json({ error: "Error al ejecutar la consulta" });
+            }
         }
         else {
-            res.status(500).json({ error: "Error al ejecutar la consulta" });
+            res.json({ result: "You are not allowed to create Courses", status: 1 });
         }
     }
     catch (error) {

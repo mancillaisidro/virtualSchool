@@ -4,6 +4,7 @@ import { Course, validateCourse, validateId } from "../models/validateCourse";
 dotenv.config();
 const app = express.Router();
 const { authenticateToken } = require("./../models/auth");
+import { isUserAuthTo } from "../models/userModel";
 const { 
   getCourseById,
   getAllCoursesByUserId,
@@ -31,15 +32,21 @@ app.get("/", authenticateToken, async (req: Request, res: Response) => {
 // Ruta POST para crear un nuevo course, se le debe de enviar un objeto como el siguiente:
 // POST to create a new course, a object type Couse should be sent in the body
 // {"userId":1,"title":"English"}
-app.post("", authenticateToken, validateCourse, async (req: Request, res: Response) => {
+app.post("", authenticateToken, validateCourse,  async (req: Request, res: Response) => {
   try {
     const course: Course = req.body;
-    const { result, status } = await createCourse(course);
-    if (status) {
-      res.json(result);
-    } else {
-      res.status(500).json({ error: "Error al ejecutar la consulta" });
+    const { isAllowed } = await isUserAuthTo("createCourse", course.userId);
+    if(isAllowed){
+      const { result, status } = await createCourse(course);
+      if (status) {
+        res.json(result);
+      } else {
+        res.status(500).json({ error: "Error al ejecutar la consulta" });
+      }
+    } else{
+      res.json({ result: "You are not allowed to create Courses", status: 1 });
     }
+    
   } catch (error) {
     console.error("Error al crear un registro:", error);
     res.status(500).json({ error: "Error al crear un registro" });

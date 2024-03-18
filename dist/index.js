@@ -38,6 +38,8 @@ app.set("views", path_1.default.join(__dirname, "views"));
 // app.use("/virtualschool/lessons", require("./routes/lessons"));
 // route for REGISTER new Users
 app.use("/register", require('./routes/register'));
+// route to GET ALL Users
+app.use("/users", require('./routes/user'));
 // definiendo ruta para los courses
 app.use("/virtualschool/course", require("./routes/course"));
 // definiendo ruta para los lessons
