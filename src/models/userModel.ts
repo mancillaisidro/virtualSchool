@@ -38,8 +38,7 @@ export const userIdExist = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-  export const isUserAuthTo = async (action: string, userId: number) => {
-    console.log(userId)
+export const isUserAuthTo = async (action: string, userId: number) => {
     try {
       const query = 'SELECT user_type FROM public.user WHERE id = $1';
       const pool = new Pool(config);
@@ -55,6 +54,7 @@ export const userIdExist = async (req: Request, res: Response, next: NextFunctio
       return { error: "Errror trying to get a row:", status: 0 };
     }
 };
+
 export const getAllUsers = async () => {
     try {
       const query = 'SELECT id, name, mail FROM public.user;';

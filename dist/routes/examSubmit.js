@@ -17,8 +17,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
-const { createExamSubmit, getAllSubmitionsByExamId } = require("./../models/examSubmitModel");
+const { createExamSubmit, getAllSubmitionsByExamId, gradeExam } = require("./../models/examSubmitModel");
 const validateExamSubmit_1 = require("../models/validateExamSubmit");
+const userModel_1 = require("../models/userModel");
 // GET general para obtener todos los submit assigments por examId, 
 app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -51,6 +52,29 @@ app.post("", authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, r
     catch (error) {
         console.error("Error al crear un registro:", error);
         res.status(500).json({ error: "Error al crear un registro" });
+    }
+}));
+// Ruta POST to grade an examSubmition
+app.post("/grade", authenticateToken, validateExamSubmit_1.validateExamGrade, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const examencito = req.body;
+        const { isAllowed } = yield (0, userModel_1.isUserAuthTo)("gradeExam", examencito.teacherId);
+        if (isAllowed) {
+            const { result, status } = yield gradeExam(examencito);
+            if (status) {
+                res.json(result);
+            }
+            else {
+                res.status(500).json({ error: "Error al ejecutar la consulta" });
+            }
+        }
+        else {
+            res.json({ result: "You are not allowed to grade Exam", status: 1 });
+        }
+    }
+    catch (error) {
+        console.error("Error al crear un registro:", error);
+        res.status(500).json({ error: "Error in POST /grade" });
     }
 }));
 module.exports = app;

@@ -49,4 +49,24 @@ const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, funct
         return { error: "Error en la consulta", status: 0 };
     }
 });
-module.exports = { createExamSubmit, getAllSubmitionsByExamId };
+const gradeExam = (exam) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
+    try {
+        yield pool.query('BEGIN');
+        const query = 'UPDATE public.exam_submition SET score = $1 WHERE submition_id = $2 RETURNING score, submition_id';
+        const values = [exam.score, exam.submitionId];
+        const resultQuery = yield pool.query(query, values);
+        if (resultQuery.rows.length == 0)
+            return { result: 'submition Id does not exist', status: 1 };
+        const query2 = 'UPDATE public.student_exam SET status = $1 WHERE exam_id = $2';
+        yield pool.query(query2, [2, exam.teacherId]);
+        yield pool.query('COMMIT');
+        return { result: resultQuery.rows[0], status: 1 };
+    }
+    catch (error) {
+        console.error("Error while executing a transaction in gradeExam function:", error);
+        yield pool.query('ROLLBACK');
+        return { error: "Error in gradeExam function", status: 0 };
+    }
+});
+module.exports = { createExamSubmit, getAllSubmitionsByExamId, gradeExam };

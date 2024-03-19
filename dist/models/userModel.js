@@ -44,7 +44,6 @@ const userIdExist = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.userIdExist = userIdExist;
 const isUserAuthTo = (action, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(userId);
     try {
         const query = 'SELECT user_type FROM public.user WHERE id = $1';
         const pool = new pg_1.Pool(config);

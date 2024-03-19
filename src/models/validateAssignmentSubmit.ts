@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 export interface AssignmentSubmit{
-    userId: string,
+    userId: number,
     assignmentId: number,
     fileName: string,
     comment?: string

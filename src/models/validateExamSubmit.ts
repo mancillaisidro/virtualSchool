@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 export interface ExamSubmit{
-    userId: string,
+    userId: number,
     examId: number,
     fileName: string,
     comment?: string
+}
+export interface ExamGrade{
+  submitionId: number,
+  score:number,
+  teacherId: number
 }
 
 export const validateExamSubmit = (req: Request, res: Response, next: NextFunction) => {
@@ -34,4 +39,18 @@ export const validateId = (req: Request, res: Response, next: NextFunction) => {
       next()
 };
 
-module.exports = { validateExamSubmit, validateId };
+export const validateExamGrade = (req: Request, res: Response, next: NextFunction) => {
+  const newSchema = Joi.object({
+      teacherId: Joi.number().min(1).required().integer(),
+      submitionId: Joi.number().min(1).required().integer(),
+      score: Joi.number().min(1).required().integer().max(100),
+  })
+      const { error} = newSchema.validate(req.body, { abortEarly: false });
+      if(error){
+        const errorMessage = error.details.map((err: { message: any; }) => err.message).join(', ');
+        return res.status(400).json({ error: errorMessage });
+      }
+      next()
+};
+
+module.exports = { validateExamSubmit, validateId, validateExamGrade };
