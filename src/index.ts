@@ -108,10 +108,10 @@ app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 
 // definiendo ruta para formulario de subir archivo DE PRUEBA SOLAMENTE
-// app.get("/uploadLessonFile", async (req: Request, res: Response) => {
+app.get("/uploadLessonFile", async (req: Request, res: Response) => {
 //   //sended ? res.json('Correo Enviado') : res.json('Hubo un error')
-//   res.render("uploadFileForm.ejs");
-// });
+   res.render("uploadFileForm.ejs");
+});
 
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
 

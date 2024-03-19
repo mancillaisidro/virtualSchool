@@ -108,10 +108,10 @@ app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 // definiendo ruta para formulario de subir archivo DE PRUEBA SOLAMENTE
-// app.get("/uploadLessonFile", async (req: Request, res: Response) => {
-//   //sended ? res.json('Correo Enviado') : res.json('Hubo un error')
-//   res.render("uploadFileForm.ejs");
-// });
+app.get("/uploadLessonFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //   //sended ? res.json('Correo Enviado') : res.json('Hubo un error')
+    res.render("uploadFileForm.ejs");
+}));
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
 app.get("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Hi there, I'm working! :)");

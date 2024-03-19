@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const pg_1 = require("pg");
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 const upload = require("./../models/uploadFile");
 const app = express_1.default.Router();
 // const {checkIfLessonExist, savePathInDB} = require('./../models/lessons');
@@ -47,13 +47,14 @@ function checkIfLessonExist(req, res, next) {
 }
 function savePathInDB(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('estamos en savePath');
         try {
-            const query = 'UPDATE public.courses SET "pathFile" = $1 WHERE "lessonId" = $2 RETURNING *';
-            const values = [req.body.pathToDB, req.body.lessonId];
+            const query = 'UPDATE public.exam SET file = $1 WHERE exam_id = $2 RETURNING *';
+            const values = [req.body.pathToDB, req.body.examId];
             const pool = new pg_1.Pool(config);
             const result = yield pool.query(query, values);
             if (result.rows.length === 0) {
-                res.json("LessonId does not exist in the database.");
+                res.json("ExamId does not exist in the database.");
             }
             else {
                 next();
@@ -67,6 +68,7 @@ function savePathInDB(req, res, next) {
 }
 // Ruta para manejar la subida de archivos
 app.post("", upload.single("file"), /* middleware function to store the file in the server */ savePathInDB, /* once the file is stored in the server, we save the file name in the database */ (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('estamos en POST method');
     if (!req.file) {
         // El archivo no se subió correctamente
         return res

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Pool } from "pg";
-const config = require("./../routes/dbconfig");
+const config = require("./../routes/dbProductionConfig");
 const upload = require("./../models/uploadFile");
 const app = express.Router();
 // const {checkIfLessonExist, savePathInDB} = require('./../models/lessons');
@@ -33,14 +33,15 @@ async function checkIfLessonExist(
   }
 }
 async function savePathInDB(req: Request, res: Response, next: NextFunction) {
+  console.log('estamos en savePath')
   try {
     const query =
-      'UPDATE public.courses SET "pathFile" = $1 WHERE "lessonId" = $2 RETURNING *';
-    const values = [req.body.pathToDB, req.body.lessonId];
+      'UPDATE public.exam SET file = $1 WHERE exam_id = $2 RETURNING *';
+    const values = [req.body.pathToDB, req.body.examId];
     const pool = new Pool(config);
     const result = await pool.query(query, values);
     if (result.rows.length === 0) {
-      res.json("LessonId does not exist in the database.");          
+      res.json("ExamId does not exist in the database.");          
     } else {
       next()
     }
@@ -55,6 +56,7 @@ app.post(
   upload.single("file"), /* middleware function to store the file in the server */
   savePathInDB, /* once the file is stored in the server, we save the file name in the database */
   async (req: Request, res: Response) => {
+    console.log('estamos en POST method')
     if (!req.file) {
       // El archivo no se subió correctamente
       return res
