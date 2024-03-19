@@ -17,14 +17,14 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
-const { createExamSubmit, getAllSubmitionsByExamId, gradeExam } = require("./../models/examSubmitModel");
-const validateExamSubmit_1 = require("../models/validateExamSubmit");
+const { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment } = require("./../models/assignmentSubmitModel");
+const validateAssignmentSubmit_1 = require("../models/validateAssignmentSubmit");
 const userModel_1 = require("../models/userModel");
 // GET general para obtener todos los submit assigments por examId, 
-app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/byExamId/:id", authenticateToken, validateAssignmentSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { result, status } = yield getAllSubmitionsByExamId(id);
+        const { result, status } = yield getAllSubmitionsByAssignmentId(id);
         if (status) {
             res.json(result);
         }
@@ -34,14 +34,14 @@ app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (re
     }
     catch (error) {
         console.error("Error al mostrar los cursos:", error);
-        res.status(500).json({ error: "Error al mostrar los cursos" });
+        res.status(500).json({ error: "Error in GET /assignmentSubmition" });
     }
 }));
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:
-app.post("", authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", authenticateToken, validateAssignmentSubmit_1.validateAssignmentSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const examencito = req.body;
-        const { result, status } = yield createExamSubmit(examencito);
+        const assignment = req.body;
+        const { result, status } = yield createAssignmentSubmit(assignment);
         if (status) {
             res.json(result);
         }
@@ -51,30 +51,30 @@ app.post("", authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, r
     }
     catch (error) {
         console.error("Error al crear un registro:", error);
-        res.status(500).json({ error: "Error al crear un registro" });
+        res.status(500).json({ error: "Error in POST /assignmentSubmition" });
     }
 }));
 // Route POST to grade an examSubmition
-app.post("/grade", authenticateToken, validateExamSubmit_1.validateExamGrade, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/grade", authenticateToken, validateAssignmentSubmit_1.validateAssignmentGrade, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const examencito = req.body;
-        const { isAllowed } = yield (0, userModel_1.isUserAuthTo)("gradeExam", examencito.teacherId);
+        const assignment = req.body;
+        const { isAllowed } = yield (0, userModel_1.isUserAuthTo)("gradeAssignment", assignment.teacherId);
         if (isAllowed) {
-            const { result, status } = yield gradeExam(examencito);
+            const { result, status } = yield gradeAssignment(assignment);
             if (status) {
                 res.json(result);
             }
             else {
-                res.status(500).json({ error: "Error al ejecutar la consulta" });
+                res.status(500).json({ error: "Error in POST /Assignment method" });
             }
         }
         else {
-            res.json({ result: "You are not allowed to grade Exam", status: 1 });
+            res.json({ result: "You are not allowed to grade Assignment", status: 1 });
         }
     }
     catch (error) {
         console.error("Error al crear un registro:", error);
-        res.status(500).json({ error: "Error in POST /grade" });
+        res.status(500).json({ error: "Error in POST assignmentSubmition/grade" });
     }
 }));
 module.exports = app;

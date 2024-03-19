@@ -50,6 +50,8 @@ app.use("/exam", require('./routes/exam'));
 app.use("/examSubmition", require('./routes/examSubmit'));
 // route for assignments
 app.use("/assignment", require('./routes/assignment'));
+// route for assignments submitions
+app.use("/assignmentSubmition", require('./routes/assignmentSubmit'));
 // route to enroll a Course
 app.use('/studentEnrollment', require('./routes/studentEnrollment'));
 // definiendo ruta para mandar un token al usuario
@@ -102,7 +104,7 @@ app.put("/json", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 // definiendo ruta para subir archivo al servidor
-// app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
+app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 // definiendo ruta para formulario de subir archivo DE PRUEBA SOLAMENTE

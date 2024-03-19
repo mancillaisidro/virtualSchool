@@ -42,7 +42,7 @@ app.post("", authenticateToken, validateExamSubmit,  async (req: Request, res: R
   }
 });
 
-// Ruta POST to grade an examSubmition
+// Route POST to grade an examSubmition
 app.post("/grade", authenticateToken, validateExamGrade,  async (req: Request, res: Response) => {
   try {
       const examencito: ExamGrade = req.body;

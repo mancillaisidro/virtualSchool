@@ -12,12 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
 const config = require("./../routes/dbProductionConfig");
 // method to get all the exams created by an Instructor
-const createExamSubmit = (examSubmit) => __awaiter(void 0, void 0, void 0, function* () {
+const createAssignmentSubmit = (examSubmit) => __awaiter(void 0, void 0, void 0, function* () {
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'INSERT INTO public.assignment_submition (assignment_id, user_id, url, comment) VALUES ($1, $2, $3, $4) RETURNING submition_id';
-        const values = [examSubmit.assignmentId, examSubmit.userId, examSubmit.fileName, examSubmit.comment];
+        const query = 'INSERT INTO public.assignment_submition (user_id, assignment_id, url, comment) VALUES ($1, $2, $3, $4) RETURNING submition_id';
+        const values = [examSubmit.userId, examSubmit.assignmentId, examSubmit.fileName, examSubmit.comment];
         const resultQuery = yield pool.query(query, values);
         const query2 = 'UPDATE public.student_assignment SET status = $1';
         yield pool.query(query2, [1]);
@@ -31,7 +31,7 @@ const createExamSubmit = (examSubmit) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 // method to get all the exams created by an Instructor
-const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllSubmitionsByAssignmentId = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
@@ -49,4 +49,24 @@ const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, funct
         return { error: "Error en la consulta", status: 0 };
     }
 });
-module.exports = { createExamSubmit, getAllSubmitionsByExamId };
+const gradeAssignment = (exam) => __awaiter(void 0, void 0, void 0, function* () {
+    const pool = new pg_1.Pool(config);
+    try {
+        yield pool.query('BEGIN');
+        const query = 'UPDATE public.assignment_submition SET score = $1 WHERE submition_id = $2 RETURNING score, submition_id';
+        const values = [exam.score, exam.submitionId];
+        const resultQuery = yield pool.query(query, values);
+        if (resultQuery.rows.length == 0)
+            return { result: 'submition Id does not exist', status: 1 };
+        const query2 = 'UPDATE public.student_assignment SET status = $1 WHERE assignment_id = $2';
+        yield pool.query(query2, [2, exam.teacherId]);
+        yield pool.query('COMMIT');
+        return { result: resultQuery.rows[0], status: 1 };
+    }
+    catch (error) {
+        console.error("Error while executing a transaction in gradeAssignment function:", error);
+        yield pool.query('ROLLBACK');
+        return { error: "Error in gradeAssignment function", status: 0 };
+    }
+});
+module.exports = { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment };
