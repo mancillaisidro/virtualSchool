@@ -4,17 +4,11 @@ import path, { extname, join } from "path";
 const MIMETYPES = ["image/jpeg","image/png","application/pdf", "application/vnd.openxmlformats-officedocument.presentationml.presentation"];
 
 //multer configuration
-let tempraryImageDirectory: string;
-if (process.env.DEV && process.env.DEV === 'Yes') {
-  console.log('----------estamos en DEV-----------')
-  tempraryImageDirectory = path.join(__dirname, `./../tmp/`);
-} else {
-  tempraryImageDirectory = '/tmp/';
-}
+
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: join(__dirname, tempraryImageDirectory),
+    destination: join(__dirname, "./../uploads"),
     filename: async (req: Request, file: Express.Multer.File, cb: any) => {
       const fileExtension = extname(file.originalname);
       const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g,"");

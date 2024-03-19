@@ -104,7 +104,7 @@ app.put("/json", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 // definiendo ruta para subir archivo al servidor
-app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
+// app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 // definiendo ruta para formulario de subir archivo DE PRUEBA SOLAMENTE
@@ -113,6 +113,27 @@ app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 //   res.render("uploadFileForm.ejs");
 // });
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
+const fs_1 = __importDefault(require("fs"));
+const os_1 = __importDefault(require("os"));
+let tmpDir;
+const appPrefix = 'my-app';
+try {
+    tmpDir = fs_1.default.mkdtempSync(path_1.default.join(os_1.default.tmpdir(), appPrefix));
+    // the rest of your app goes here
+}
+catch (e) {
+    // handle error
+}
+finally {
+    try {
+        if (tmpDir) {
+            fs_1.default.rmSync(tmpDir, { recursive: true });
+        }
+    }
+    catch (e) {
+        console.error(`An error has occurred while removing the temp folder at ${tmpDir}. Please remove it manually. Error: ${e}`);
+    }
+}
 app.get("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Hi there, I'm working! :)");
 }));
