@@ -48,7 +48,7 @@ else {
 }
 const upload = (0, multer_1.default)({
     storage: multer_1.default.diskStorage({
-        destination: (0, path_1.join)(__dirname, tempraryImageDirectory),
+        destination: tempraryImageDirectory,
         filename: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
             const fileExtension = (0, path_1.extname)(file.originalname);
             const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g, "");

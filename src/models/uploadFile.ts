@@ -14,7 +14,7 @@ if (process.env.DEV && process.env.DEV === 'Yes') {
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: join(__dirname, tempraryImageDirectory),
+    destination: tempraryImageDirectory,
     filename: async (req: Request, file: Express.Multer.File, cb: any) => {
       const fileExtension = extname(file.originalname);
       const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g,"");
