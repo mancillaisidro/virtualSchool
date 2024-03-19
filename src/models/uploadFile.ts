@@ -8,7 +8,7 @@ const MIMETYPES = ["image/jpeg","image/png","application/pdf", "application/vnd.
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: join(__dirname, "./../uploads"),
+    destination: join(__dirname, "./../tmp"),
     filename: async (req: Request, file: Express.Multer.File, cb: any) => {
       const fileExtension = extname(file.originalname);
       const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g,"");

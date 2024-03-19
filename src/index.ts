@@ -115,28 +115,6 @@ app.put("/json",async (req: Request, res: Response) => {
 
 // app.use("/getCourses", express.static(path.join(__dirname, "./uploads")));
 
-import fs from 'fs';
-import os from 'os';
-let tmpDir;
-const appPrefix = 'my-app';
-try {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), appPrefix));
-  // the rest of your app goes here
-}
-catch (e) {
-  // handle error
-}
-finally {
-  try {
-    if (tmpDir) {
-      fs.rmSync(tmpDir, { recursive: true });
-    }
-  }
-  catch (e) {
-    console.error(`An error has occurred while removing the temp folder at ${tmpDir}. Please remove it manually. Error: ${e}`);
-  }
-}
-
 app.get("", async (req: Request, res: Response) => {
     res.send("Hi there, I'm working! :)");
   });
