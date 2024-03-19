@@ -121,18 +121,18 @@ const checkIfLessonExist = (req, res, next) => __awaiter(void 0, void 0, void 0,
 function getFileName(req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const id = (_a = req.query.lessonId) !== null && _a !== void 0 ? _a : 0;
+        const id = (_a = req.query.examId) !== null && _a !== void 0 ? _a : 0;
         if (id === null || id === "" || id === undefined)
-            res.status(401).json({ message: "lessonId is null, undefined or empty" });
+            res.status(401).json({ message: "examId is null, undefined or empty" });
         try {
-            const query = 'SELECT "lessonId", "pathFile" FROM public.courses WHERE "lessonId" = $1';
+            const query = 'SELECT file FROM public.exam WHERE exam_id = $1';
             const pool = new pg_1.Pool(config);
             const result = yield pool.query(query, [id]);
             if (result.rows.length === 0) {
-                res.status(401).json("lessonId not found");
+                res.status(401).json("examId not found");
             }
             else {
-                req.params.pathFile = result.rows[0].pathFile;
+                req.params.pathFile = result.rows[0].file;
                 next();
             }
         }

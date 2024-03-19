@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const path_1 = __importDefault(require("path"));
 const app = express_1.default.Router();
 const { getFileName } = require("./../models/lessons");
 // async function checkIfLessonExist(
@@ -48,7 +47,7 @@ const { getFileName } = require("./../models/lessons");
 // { "lessonId": 4000 }
 app.get("", getFileName, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const filePath = path_1.default.join(__dirname, `./../uploads/${req.params.pathFile}`);
+        const filePath = `/tmp/${req.params.pathFile}`;
         res.download(filePath);
     }
     catch (error) {

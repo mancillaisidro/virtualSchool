@@ -129,18 +129,18 @@ async function getFileName(
     res: Response,
     next: NextFunction
   ) {
-    const id = req.query.lessonId ?? 0;
+    const id = req.query.examId ?? 0;
     if (id === null || id === "" || id === undefined)
-      res.status(401).json({ message: "lessonId is null, undefined or empty" });
+      res.status(401).json({ message: "examId is null, undefined or empty" });
     try {
       const query =
-        'SELECT "lessonId", "pathFile" FROM public.courses WHERE "lessonId" = $1';
+        'SELECT file FROM public.exam WHERE exam_id = $1';
       const pool = new Pool(config);
       const result = await pool.query(query, [id]);
       if (result.rows.length === 0) {
-        res.status(401).json("lessonId not found");
+        res.status(401).json("examId not found");
       } else {
-        req.params.pathFile = result.rows[0].pathFile;
+        req.params.pathFile = result.rows[0].file;
         next();
       }
     } catch (error) {

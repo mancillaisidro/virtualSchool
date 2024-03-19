@@ -37,10 +37,8 @@ app.get(
   getFileName,
   async (req: Request, res: Response) => {
     try {
-      const filePath = path.join(
-        __dirname,
-        `./../uploads/${req.params.pathFile}`
-      );
+      const filePath = 
+        `/tmp/${req.params.pathFile}`;
       res.download(filePath);
     } catch (error) {
       console.log(
