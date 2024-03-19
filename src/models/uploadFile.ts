@@ -5,10 +5,16 @@ const MIMETYPES = ["image/jpeg","image/png","application/pdf", "application/vnd.
 
 //multer configuration
 
+let tempraryImageDirectory: string;
+if (process.env.DEV && process.env.DEV === 'Yes') {
+  tempraryImageDirectory = path.join(__dirname, `../../tmp/`);
+} else {
+  tempraryImageDirectory = '/tmp/';
+}
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: join(__dirname, "./../tmp"),
+    destination: join(__dirname, tempraryImageDirectory),
     filename: async (req: Request, file: Express.Multer.File, cb: any) => {
       const fileExtension = extname(file.originalname);
       const filename = file.originalname.split(fileExtension)[0].replace(/\s+/g,"");
