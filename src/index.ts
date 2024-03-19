@@ -103,7 +103,7 @@ app.put("/json",async (req: Request, res: Response) => {
 })
 
 // definiendo ruta para subir archivo al servidor
-// app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
+app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));
 // definiendo ruta para obtener un archivo de la lesson desde el servidor
 // app.use("/virtualschool/getLessonFile", require("./routes/sendFile"));
 
