@@ -33,8 +33,8 @@ const createExam = (exam) => __awaiter(void 0, void 0, void 0, function* () {
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'INSERT INTO public.exam (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        const values = [exam.description, exam.lessonId, exam.dueDate, exam.userId, exam.title];
+        const query = 'INSERT INTO public.exam (description, lesson_id, due_date, user_id, title, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+        const values = [exam.description, exam.lessonId, exam.dueDate, exam.userId, exam.title, exam.pathToDB];
         const resultQuery = yield pool.query(query, values);
         const query2 = 'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
         const lessonIdValue = [resultQuery.rows[0].lesson_id];
@@ -55,7 +55,7 @@ const createExam = (exam) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const getExamById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'SELECT exam_id, description, lesson_id, due_date, user_id, title FROM public.exam WHERE exam_id = $1';
+        const query = 'SELECT exam_id, description, lesson_id, due_date, user_id, title, file FROM public.exam WHERE exam_id = $1';
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, [id]);
         if (result.rows.length === 0) {

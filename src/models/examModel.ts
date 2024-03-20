@@ -8,6 +8,7 @@ export interface Exam{
     description: string,
     dueDate: string,
     userId: number,
+    pathToDB: string,
 }
 // method to get all the exams created by an Instructor
 const getAllExamsByUserId = async (id:number) => {
@@ -31,8 +32,8 @@ const createExam = async (exam: Exam) => {
   try {
     await pool.query('BEGIN');
     const query =
-      'INSERT INTO public.exam (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const values = [exam.description, exam.lessonId, exam.dueDate, exam.userId, exam.title];
+      'INSERT INTO public.exam (description, lesson_id, due_date, user_id, title, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const values = [exam.description, exam.lessonId, exam.dueDate, exam.userId, exam.title, exam.pathToDB];
     const resultQuery = await pool.query(query, values);
     const query2 =
       'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
@@ -55,7 +56,7 @@ const createExam = async (exam: Exam) => {
 
 const getExamById = async (id: number) => {
   try {
-    const query = 'SELECT exam_id, description, lesson_id, due_date, user_id, title FROM public.exam WHERE exam_id = $1';
+    const query = 'SELECT exam_id, description, lesson_id, due_date, user_id, title, file FROM public.exam WHERE exam_id = $1';
     const pool = new Pool(config);
     const result = await pool.query(query, [id]);
     if (result.rows.length === 0) {

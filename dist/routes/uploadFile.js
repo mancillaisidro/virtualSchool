@@ -47,7 +47,6 @@ function checkIfLessonExist(req, res, next) {
 }
 function savePathInDB(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('estamos en savePath');
         try {
             const query = 'UPDATE public.exam SET file = $1 WHERE exam_id = $2 RETURNING *';
             const values = [req.body.pathToDB, req.body.examId];
@@ -73,7 +72,7 @@ app.post("", upload.single("file"), /* middleware function to store the file in 
         // El archivo no se subió correctamente
         return res
             .status(400)
-            .json({ error: "Please select a file to be uploaded." });
+            .json({ error: "Error saving the video." });
     }
     res.json("File saved succesfully");
 }));

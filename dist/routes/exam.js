@@ -14,8 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const fs_1 = __importDefault(require("fs"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
+const upload = require("./../models/uploadFile");
 const { authenticateToken } = require("./../models/auth");
 const { getAllExamsByUserId, createExam, getExamById, updateExamById, deleteExam } = require("./../models/examModel");
 const validateExam_1 = require("../models/validateExam");
@@ -37,9 +39,15 @@ app.get("/byCreator/:id", authenticateToken, validateExam_1.validateId, (req, re
     }
 }));
 // Ruta POST to create A NEW EXAM, se le debe de enviar un objeto como el siguiente:
-// {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300"}
-app.post("", authenticateToken, validateExam_1.validateExam, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300", "file", "archivo.pdf"}
+app.post("", upload.single("file"), validateExam_1.validateExam, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (!req.file) {
+            // El archivo no se subió correctamente
+            return res
+                .status(400)
+                .json({ error: "Error saving the document." });
+        }
         const examencito = req.body;
         const { result, status } = yield createExam(examencito);
         if (status) {
@@ -59,7 +67,15 @@ app.get("/:id", authenticateToken, validateExam_1.validateId, (req, res) => __aw
     const { id } = req.params;
     const { result, status } = yield getExamById(id);
     if (status) {
-        res.json(result);
+        const filePath = `/tmp/${result.file}`;
+        fs_1.default.readFile(filePath, (err, data) => {
+            if (err) {
+                console.log('error reading the file');
+                return res.status(500).json({ error: 'Error reading the file' });
+            }
+            const base64File = data.toString('base64');
+            res.json(Object.assign(Object.assign({}, result), { file: base64File }));
+        });
     }
     else {
         res.status(500).json({ error: "Error al ejecutar la consulta" });

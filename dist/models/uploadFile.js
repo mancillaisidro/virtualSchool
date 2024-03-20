@@ -41,10 +41,10 @@ const MIMETYPES = ["image/jpeg", "image/png", "application/pdf", "application/vn
 //multer configuration
 let tempraryImageDirectory;
 if (process.env.DEV && process.env.DEV === 'Yes') {
-    tempraryImageDirectory = path_1.default.join(__dirname, `../../tmp/`);
+    tempraryImageDirectory = path_1.default.join(__dirname, `../../tmp/`); // for development
 }
 else {
-    tempraryImageDirectory = '/tmp/';
+    tempraryImageDirectory = '/tmp/'; //for production
 }
 const upload = (0, multer_1.default)({
     storage: multer_1.default.diskStorage({

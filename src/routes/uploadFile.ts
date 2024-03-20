@@ -33,7 +33,6 @@ async function checkIfLessonExist(
   }
 }
 async function savePathInDB(req: Request, res: Response, next: NextFunction) {
-  console.log('estamos en savePath')
   try {
     const query =
       'UPDATE public.exam SET file = $1 WHERE exam_id = $2 RETURNING *';
@@ -61,7 +60,7 @@ app.post(
       // El archivo no se subió correctamente
       return res
         .status(400)
-        .json({ error: "Please select a file to be uploaded." });
+        .json({ error: "Error saving the video." });
     }
     res.json("File saved succesfully");
   }

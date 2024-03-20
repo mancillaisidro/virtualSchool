@@ -7,9 +7,9 @@ const MIMETYPES = ["image/jpeg","image/png","application/pdf", "application/vnd.
 
 let tempraryImageDirectory: string;
 if (process.env.DEV && process.env.DEV === 'Yes') {
-  tempraryImageDirectory = path.join(__dirname, `../../tmp/`);
+  tempraryImageDirectory = path.join(__dirname, `../../tmp/`); // for development
 } else {
-  tempraryImageDirectory = '/tmp/';
+  tempraryImageDirectory = '/tmp/'; //for production
 }
 
 const upload = multer({
