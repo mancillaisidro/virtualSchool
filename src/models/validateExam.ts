@@ -16,7 +16,7 @@ export const validateExam = (req: Request, res: Response, next: NextFunction) =>
         description: Joi.string().required(),
         dueDate: Joi.date().required(),
         userId: Joi.number().min(1).required(),
-        pathToDB: Joi.required(),
+        pathToDB: Joi.string().required(),
     })
         const { error} = examSchema.validate(req.body, { abortEarly: false });
         if(error){

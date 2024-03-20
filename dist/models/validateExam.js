@@ -20,7 +20,7 @@ const validateExam = (req, res, next) => {
         description: joi_1.default.string().required(),
         dueDate: joi_1.default.date().required(),
         userId: joi_1.default.number().min(1).required(),
-        pathToDB: joi_1.default.required(),
+        pathToDB: joi_1.default.string().required(),
     });
     const { error } = examSchema.validate(req.body, { abortEarly: false });
     if (error) {

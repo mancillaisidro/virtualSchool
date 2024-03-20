@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
+import fs from 'fs';
 dotenv.config();
 const app = express.Router();
+const upload = require("./../models/uploadFile");
 const { authenticateToken } = require("./../models/auth");
 const {
     getAllAssignmentsByUserId, 
@@ -30,10 +32,17 @@ app.get("/byCreator/:id", authenticateToken, validateId, async (req: Request, re
 
 // Ruta POST to create A NEW EXAM, se le debe de enviar un objeto como el siguiente:
 // {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300"}
-app.post("", authenticateToken, validateAssignment, async (req: Request, res: Response) => {
+app.post("", upload.single("file"), validateAssignment, async (req: Request, res: Response) => {
+
   try {
-    const examencito: Assignment = req.body
-    const { result, status } = await createAssignment(examencito);
+    if (!req.file) {
+      // El archivo no se subió correctamente
+      return res
+        .status(400)
+        .json({ error: "Error saving the document." });
+    }
+    const assignmentcito: Assignment = req.body
+    const { result, status } = await createAssignment(assignmentcito);
     if (status) {
       res.json(result);
     } else {
@@ -50,7 +59,15 @@ app.get("/:id", authenticateToken, validateId, async (req: Request, res: Respons
   const { id } = req.params;
   const { result, status } = await getAssignmentById(id);
   if (status) {
-    res.json(result);
+    const filePath = `/tmp/${result.file}`;
+    fs.readFile(filePath, (err, data)=>{
+      if(err){
+        console.log('error reading the file'); 
+        return res.status(500).json({error:'Error reading the file'})
+      } 
+      const base64File = data.toString('base64');
+      res.json({...result, file: base64File});
+    })
   } else {
     res.status(500).json({ error: "Error al ejecutar la consulta" });
   }

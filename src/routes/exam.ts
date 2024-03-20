@@ -57,10 +57,8 @@ app.post("", upload.single("file"), validateExam, async (req: Request, res: Resp
 app.get("/:id", authenticateToken, validateId,  async (req: Request, res: Response) => {
   const { id } = req.params;
   const { result, status } = await getExamById(id);
-  console.log('result de getExamById', result)
   if (status) {
     const filePath = `/tmp/${result.file}`;
-    console.log('------',filePath)
     fs.readFile(filePath, (err, data)=>{
       if(err){
         console.log('error reading the file'); 
@@ -69,7 +67,6 @@ app.get("/:id", authenticateToken, validateId,  async (req: Request, res: Respon
       const base64File = data.toString('base64');
       res.json({...result, file: base64File});
     })
-    
   } else {
     res.status(500).json({ error: "Error al ejecutar la consulta" });
   }

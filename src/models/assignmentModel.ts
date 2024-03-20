@@ -8,7 +8,7 @@ export interface Assignment{
     description: string,
     dueDate: string,
     userId: number,
-
+    pathToDB: string,
 }
 // method to get all the assignments created by an Instructor
 const getAllAssignmentsByUserId = async (id:number) => {
@@ -33,8 +33,8 @@ const createAssignment = async (assignment: Assignment) => {
   try {
     await pool.query('BEGIN');
     const query =
-      'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
-    const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title];
+      'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;';
+    const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title, assignment.pathToDB];
     const resultQuery = await pool.query(query, values);
     const query2 =
       'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
@@ -58,7 +58,7 @@ const createAssignment = async (assignment: Assignment) => {
 
 const getAssignmentById = async (id: number) => {
   try {
-    const query = 'SELECT assignment_id, description, lesson_id, due_date, user_id, title FROM public.assignment WHERE assignment_id = $1';
+    const query = 'SELECT assignment_id, description, lesson_id, due_date, user_id, title, file FROM public.assignment WHERE assignment_id = $1';
     const pool = new Pool(config);
     const result = await pool.query(query, [id]);
     if (result.rows.length === 0) {

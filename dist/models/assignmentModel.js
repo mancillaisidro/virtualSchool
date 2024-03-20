@@ -33,8 +33,8 @@ const createAssignment = (assignment) => __awaiter(void 0, void 0, void 0, funct
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
-        const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title];
+        const query = 'INSERT INTO public.assignment (description, lesson_id, due_date, user_id, title, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;';
+        const values = [assignment.description, assignment.lessonId, assignment.dueDate, assignment.userId, assignment.title, assignment.pathToDB];
         const resultQuery = yield pool.query(query, values);
         const query2 = 'SELECT user_id FROM public.student_lesson WHERE lesson_id = $1';
         const lessonIdValue = [resultQuery.rows[0].lesson_id];
@@ -55,7 +55,7 @@ const createAssignment = (assignment) => __awaiter(void 0, void 0, void 0, funct
 });
 const getAssignmentById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = 'SELECT assignment_id, description, lesson_id, due_date, user_id, title FROM public.assignment WHERE assignment_id = $1';
+        const query = 'SELECT assignment_id, description, lesson_id, due_date, user_id, title, file FROM public.assignment WHERE assignment_id = $1';
         const pool = new pg_1.Pool(config);
         const result = yield pool.query(query, [id]);
         if (result.rows.length === 0) {

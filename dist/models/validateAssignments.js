@@ -22,7 +22,8 @@ const validateAssignment = (req, res, next) => {
         title: joi_1.default.string().required(),
         description: joi_1.default.string().required(),
         dueDate: joi_1.default.date().required(),
-        userId: joi_1.default.number().min(1).required()
+        userId: joi_1.default.number().min(1).required(),
+        pathToDB: joi_1.default.string().required(),
     });
     const { error } = assignmentSchema.validate(req.body, { abortEarly: false });
     if (error) {

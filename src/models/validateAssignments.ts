@@ -19,7 +19,8 @@ export const validateAssignment = (req: Request, res: Response, next: NextFuncti
         title: Joi.string().required(),
         description: Joi.string().required(),
         dueDate: Joi.date().required(),
-        userId: Joi.number().min(1).required()
+        userId: Joi.number().min(1).required(),
+        pathToDB: Joi.string().required(),
     })
         const { error} = assignmentSchema.validate(req.body, { abortEarly: false });
         if(error){
