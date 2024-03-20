@@ -66,8 +66,10 @@ app.post("", upload.single("file"), validateExam_1.validateExam, (req, res) => _
 app.get("/:id", authenticateToken, validateExam_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { result, status } = yield getExamById(id);
+    console.log('result de getExamById', result);
     if (status) {
         const filePath = `/tmp/${result.file}`;
+        console.log('------', filePath);
         fs_1.default.readFile(filePath, (err, data) => {
             if (err) {
                 console.log('error reading the file');
