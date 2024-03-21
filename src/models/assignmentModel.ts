@@ -29,7 +29,6 @@ const getAllAssignmentsByUserId = async (id:number) => {
 
 const createAssignment = async (assignment: Assignment) => {
   const pool = new Pool(config);
-  
   try {
     await pool.query('BEGIN');
     const query =

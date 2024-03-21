@@ -17,6 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
+const upload = require("./../models/uploadFile");
 const { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment } = require("./../models/assignmentSubmitModel");
 const validateAssignmentSubmit_1 = require("../models/validateAssignmentSubmit");
 const userModel_1 = require("../models/userModel");
@@ -38,8 +39,14 @@ app.get("/byExamId/:id", authenticateToken, validateAssignmentSubmit_1.validateI
     }
 }));
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:
-app.post("", authenticateToken, validateAssignmentSubmit_1.validateAssignmentSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", upload.single("file"), validateAssignmentSubmit_1.validateAssignmentSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (!req.file) {
+            // El archivo no se subió correctamente
+            return res
+                .status(400)
+                .json({ error: "Error saving the document." });
+        }
         const assignment = req.body;
         const { result, status } = yield createAssignmentSubmit(assignment);
         if (status) {
@@ -54,7 +61,7 @@ app.post("", authenticateToken, validateAssignmentSubmit_1.validateAssignmentSub
         res.status(500).json({ error: "Error in POST /assignmentSubmition" });
     }
 }));
-// Route POST to grade an examSubmition
+// Route POST to grade an assignmentSubmition
 app.post("/grade", authenticateToken, validateAssignmentSubmit_1.validateAssignmentGrade, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const assignment = req.body;

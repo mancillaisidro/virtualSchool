@@ -3,7 +3,7 @@ import Joi from "joi";
 export interface AssignmentSubmit{
     userId: number,
     assignmentId: number,
-    fileName: string,
+    pathToDB: string,
     comment?: string
 }
 export interface AssigmentGrade{
@@ -15,7 +15,7 @@ export const validateAssignmentSubmit = (req: Request, res: Response, next: Next
     const newSchema = Joi.object({
         userId: Joi.number().min(1).required().integer(),
         assignmentId: Joi.number().min(1).required().integer(),
-        fileName: Joi.string().required(),
+        pathToDB: Joi.string().required(),
         comment: Joi.string()
     })
         const { error} = newSchema.validate(req.body, { abortEarly: false });

@@ -9,7 +9,7 @@ const validateAssignmentSubmit = (req, res, next) => {
     const newSchema = joi_1.default.object({
         userId: joi_1.default.number().min(1).required().integer(),
         assignmentId: joi_1.default.number().min(1).required().integer(),
-        fileName: joi_1.default.string().required(),
+        pathToDB: joi_1.default.string().required(),
         comment: joi_1.default.string()
     });
     const { error } = newSchema.validate(req.body, { abortEarly: false });

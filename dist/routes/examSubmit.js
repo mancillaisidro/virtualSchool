@@ -17,6 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
+const upload = require("./../models/uploadFile");
 const { createExamSubmit, getAllSubmitionsByExamId, gradeExam } = require("./../models/examSubmitModel");
 const validateExamSubmit_1 = require("../models/validateExamSubmit");
 const userModel_1 = require("../models/userModel");
@@ -38,8 +39,14 @@ app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (re
     }
 }));
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:
-app.post("", authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", upload.single("file"), authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (!req.file) {
+            // El archivo no se subió correctamente
+            return res
+                .status(400)
+                .json({ error: "Error saving the document." });
+        }
         const examencito = req.body;
         const { result, status } = yield createExamSubmit(examencito);
         if (status) {

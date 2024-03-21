@@ -16,8 +16,8 @@ const createExamSubmit = (examSubmit) => __awaiter(void 0, void 0, void 0, funct
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'INSERT INTO public.exam_submition (exam_id, user_id, url, comment) VALUES ($1, $2, $3, $4) RETURNING submition_id';
-        const values = [examSubmit.examId, examSubmit.userId, examSubmit.fileName, examSubmit.comment];
+        const query = 'INSERT INTO public.exam_submition (exam_id, user_id, file, comment) VALUES ($1, $2, $3, $4) RETURNING submition_id';
+        const values = [examSubmit.examId, examSubmit.userId, examSubmit.pathToDB, examSubmit.comment];
         const resultQuery = yield pool.query(query, values);
         const query2 = 'UPDATE public.student_exam SET status = $1';
         yield pool.query(query2, [1]);
@@ -35,7 +35,7 @@ const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, funct
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'SELECT uno.url, uno.comment, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
+        const query = 'SELECT uno.file, uno.comment, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
         const resultQuery = yield pool.query(query, [id]);
         if (resultQuery.rows.length === 0) {
             return { result: "There are not exam submitions for this exam", status: 1 };

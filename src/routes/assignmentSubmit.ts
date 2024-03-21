@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express.Router();
 const { authenticateToken } = require("./../models/auth");
+const upload = require("./../models/uploadFile");
 const {
     createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment 
 } = require("./../models/assignmentSubmitModel");
@@ -26,22 +27,28 @@ app.get("/byExamId/:id", authenticateToken, validateId, async (req: Request, res
 });
 
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:
-app.post("", authenticateToken, validateAssignmentSubmit,  async (req: Request, res: Response) => {
-  try {
-    const assignment: AssignmentSubmit = req.body;
-    const { result, status } = await createAssignmentSubmit(assignment);
-    if (status) {
-      res.json(result);
-    } else {
-      res.status(500).json({ error: "Error al ejecutar la consulta" });
-    }
-  } catch (error) {
-    console.error("Error al crear un registro:", error);
-    res.status(500).json({ error: "Error in POST /assignmentSubmition" });
-  }
+app.post("", upload.single("file"), validateAssignmentSubmit,  async (req: Request, res: Response) => {
+    try {
+        if (!req.file) {
+          // El archivo no se subió correctamente
+          return res
+            .status(400)
+            .json({ error: "Error saving the document." });
+        }
+        const assignment: AssignmentSubmit = req.body;
+        const { result, status } = await createAssignmentSubmit(assignment);
+        if (status) {
+          res.json(result);
+        } else {
+          res.status(500).json({ error: "Error al ejecutar la consulta" });
+        }
+      } catch (error) {
+        console.error("Error al crear un registro:", error);
+        res.status(500).json({ error: "Error in POST /assignmentSubmition" });
+      }
 });
 
-// Route POST to grade an examSubmition
+// Route POST to grade an assignmentSubmition
 app.post("/grade", authenticateToken, validateAssignmentGrade,  async (req: Request, res: Response) => {
   try {
       const assignment: AssigmentGrade = req.body;

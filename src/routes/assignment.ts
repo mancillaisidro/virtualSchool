@@ -33,7 +33,6 @@ app.get("/byCreator/:id", authenticateToken, validateId, async (req: Request, re
 // Ruta POST to create A NEW EXAM, se le debe de enviar un objeto como el siguiente:
 // {"description":"mi first Exam","dueDate":"2024-03-08 11:59:00","title":"Mi primera chambaaaaa","userId":"1", "lessonId": "300"}
 app.post("", upload.single("file"), validateAssignment, async (req: Request, res: Response) => {
-
   try {
     if (!req.file) {
       // El archivo no se subió correctamente
