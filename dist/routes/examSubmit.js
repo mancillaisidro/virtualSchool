@@ -39,7 +39,7 @@ app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (re
     }
 }));
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:
-app.post("", upload.single("file"), authenticateToken, validateExamSubmit_1.validateExamSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("", upload.single("file"), validateExamSubmit_1.validateExamSubmit, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
             // El archivo no se subió correctamente

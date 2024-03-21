@@ -63,7 +63,7 @@ app.post("", upload.single("file"), validateExam_1.validateExam, (req, res) => _
     }
 }));
 // Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
-app.get("/:id", authenticateToken, validateExam_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/:id", validateExam_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { result, status } = yield getExamById(id);
     if (status) {
