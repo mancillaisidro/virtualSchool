@@ -35,7 +35,7 @@ const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, funct
     const pool = new pg_1.Pool(config);
     try {
         yield pool.query('BEGIN');
-        const query = 'SELECT uno.file, uno.comment, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
+        const query = 'SELECT uno.submition_id, uno.file, uno.comment, uno.score, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
         const resultQuery = yield pool.query(query, [id]);
         if (resultQuery.rows.length === 0) {
             return { result: "There are not exam submitions for this exam", status: 1 };
@@ -47,6 +47,24 @@ const getAllSubmitionsByExamId = (id) => __awaiter(void 0, void 0, void 0, funct
     catch (error) {
         console.error("Error en la consulta:", error);
         return { error: "Error en la consulta", status: 0 };
+    }
+});
+// method to get a single Exam submition by its ID
+const getExamSubmition = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const query = 'SELECT exam_id, user_id, file, score FROM public.exam_submition WHERE submition_id = $1';
+        const pool = new pg_1.Pool(config);
+        const result = yield pool.query(query, [id]);
+        if (result.rows.length === 0) {
+            return { result: "Row not exist", status: 1 };
+        }
+        else {
+            return { result: result.rows[0], status: 1 };
+        }
+    }
+    catch (error) {
+        console.error("Error al obtener el registro:", error);
+        return { error: "Error al obtener el registro", status: 0 };
     }
 });
 const gradeExam = (exam) => __awaiter(void 0, void 0, void 0, function* () {
@@ -69,4 +87,4 @@ const gradeExam = (exam) => __awaiter(void 0, void 0, void 0, function* () {
         return { error: "Error in gradeExam function", status: 0 };
     }
 });
-module.exports = { createExamSubmit, getAllSubmitionsByExamId, gradeExam };
+module.exports = { createExamSubmit, getAllSubmitionsByExamId, gradeExam, getExamSubmition };

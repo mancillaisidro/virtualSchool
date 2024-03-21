@@ -49,6 +49,24 @@ const getAllSubmitionsByAssignmentId = (id) => __awaiter(void 0, void 0, void 0,
         return { error: "Error en la consulta", status: 0 };
     }
 });
+// method to get a single Exam submition by its ID
+const getAssignmentSubmition = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const query = 'SELECT assignment_id, user_id, file, score FROM public.assignment_submition WHERE submition_id = $1';
+        const pool = new pg_1.Pool(config);
+        const result = yield pool.query(query, [id]);
+        if (result.rows.length === 0) {
+            return { result: "Row not exist", status: 1 };
+        }
+        else {
+            return { result: result.rows[0], status: 1 };
+        }
+    }
+    catch (error) {
+        console.error("Error al obtener el registro:", error);
+        return { error: "Error al obtener el registro", status: 0 };
+    }
+});
 const gradeAssignment = (exam) => __awaiter(void 0, void 0, void 0, function* () {
     const pool = new pg_1.Pool(config);
     try {
@@ -69,4 +87,4 @@ const gradeAssignment = (exam) => __awaiter(void 0, void 0, void 0, function* ()
         return { error: "Error in gradeAssignment function", status: 0 };
     }
 });
-module.exports = { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment };
+module.exports = { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment, getAssignmentSubmition };

@@ -38,7 +38,22 @@ const getAllSubmitionsByAssignmentId = async (id:number) => {
       return { error: "Error en la consulta", status: 0 };
     }
   };
-  
+// method to get a single Exam submition by its ID
+  const getAssignmentSubmition = async (id: number) => {
+    try {
+      const query = 'SELECT assignment_id, user_id, file, score FROM public.assignment_submition WHERE submition_id = $1';
+      const pool = new Pool(config);
+      const result = await pool.query(query, [id]);
+      if (result.rows.length === 0) {
+        return { result: "Row not exist", status: 1 };
+      } else {
+        return { result: result.rows[0], status: 1 };
+      }
+    } catch (error) {
+      console.error("Error al obtener el registro:", error);
+      return { error: "Error al obtener el registro", status: 0 };
+    }
+  };
   const gradeAssignment = async (exam : AssigmentGrade) => {
     const pool = new Pool(config);
     try {
@@ -59,4 +74,4 @@ const getAllSubmitionsByAssignmentId = async (id:number) => {
     }
   };
 
-module.exports = { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment };
+module.exports = { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment, getAssignmentSubmition };

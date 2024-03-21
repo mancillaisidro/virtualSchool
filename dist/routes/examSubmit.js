@@ -14,14 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const fs_1 = __importDefault(require("fs"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
 const upload = require("./../models/uploadFile");
-const { createExamSubmit, getAllSubmitionsByExamId, gradeExam } = require("./../models/examSubmitModel");
+const { createExamSubmit, getAllSubmitionsByExamId, gradeExam, getExamSubmition, } = require("./../models/examSubmitModel");
 const validateExamSubmit_1 = require("../models/validateExamSubmit");
 const userModel_1 = require("../models/userModel");
-// GET general para obtener todos los submit assigments por examId, 
+// GET general para obtener TODOS los submit assigments por examId, 
 app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -36,6 +37,25 @@ app.get("/byExamId/:id", authenticateToken, validateExamSubmit_1.validateId, (re
     catch (error) {
         console.error("Error al mostrar los cursos:", error);
         res.status(500).json({ error: "Error al mostrar los cursos" });
+    }
+}));
+// Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
+app.get("/:id", validateExamSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { result, status } = yield getExamSubmition(id);
+    if (status) {
+        const filePath = `/tmp/${result.file}`;
+        fs_1.default.readFile(filePath, (err, data) => {
+            if (err) {
+                console.log('error reading the file');
+                return res.status(500).json({ error: 'Error reading the file' });
+            }
+            const base64File = data.toString('base64');
+            res.json(Object.assign(Object.assign({}, result), { file: base64File }));
+        });
+    }
+    else {
+        res.status(500).json({ error: "Error al ejecutar la consulta" });
     }
 }));
 // Ruta POST to create A NEW examSubmition, se le debe de enviar un objeto como el siguiente:

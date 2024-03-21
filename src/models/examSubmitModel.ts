@@ -26,7 +26,7 @@ const getAllSubmitionsByExamId = async (id:number) => {
     const pool = new Pool(config);
     try {
       await pool.query('BEGIN');
-      const query = 'SELECT uno.file, uno.comment, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
+      const query = 'SELECT uno.submition_id, uno.file, uno.comment, uno.score, dos.status, tres.name FROM public.exam_submition uno INNER JOIN public.student_exam  dos ON uno.exam_id = dos.exam_id INNER JOIN public.user tres ON dos.user_id = tres.id WHERE uno.exam_id = $1 AND dos.exam_id= $1;';
       const resultQuery = await pool.query(query, [id]);
       if (resultQuery.rows.length === 0) {
         return { result: "There are not exam submitions for this exam", status: 1 };
@@ -38,7 +38,23 @@ const getAllSubmitionsByExamId = async (id:number) => {
       return { error: "Error en la consulta", status: 0 };
     }
   };
-  
+  // method to get a single Exam submition by its ID
+  const getExamSubmition = async (id: number) => {
+    try {
+      const query = 'SELECT exam_id, user_id, file, score FROM public.exam_submition WHERE submition_id = $1';
+      const pool = new Pool(config);
+      const result = await pool.query(query, [id]);
+      if (result.rows.length === 0) {
+        return { result: "Row not exist", status: 1 };
+      } else {
+        return { result: result.rows[0], status: 1 };
+      }
+    } catch (error) {
+      console.error("Error al obtener el registro:", error);
+      return { error: "Error al obtener el registro", status: 0 };
+    }
+  };
+
   const gradeExam = async (exam : ExamGrade) => {
     const pool = new Pool(config);
     try {
@@ -59,4 +75,4 @@ const getAllSubmitionsByExamId = async (id:number) => {
     }
   };
 
-module.exports = { createExamSubmit, getAllSubmitionsByExamId, gradeExam };
+module.exports = { createExamSubmit, getAllSubmitionsByExamId, gradeExam, getExamSubmition };

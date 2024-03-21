@@ -1,11 +1,12 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
+import fs from 'fs'
 dotenv.config();
 const app = express.Router();
 const { authenticateToken } = require("./../models/auth");
 const upload = require("./../models/uploadFile");
 const {
-    createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment 
+    createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment, getAssignmentSubmition
 } = require("./../models/assignmentSubmitModel");
 import { validateAssignmentSubmit, validateId, validateAssignmentGrade } from "../models/validateAssignmentSubmit";
 import { isUserAuthTo } from "../models/userModel";
@@ -47,6 +48,25 @@ app.post("", upload.single("file"), validateAssignmentSubmit,  async (req: Reque
         res.status(500).json({ error: "Error in POST /assignmentSubmition" });
       }
 });
+
+// Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
+app.get("/:id", validateId,  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { result, status } = await getAssignmentSubmition(id);
+    if (status) {
+      const filePath = `/tmp/${result.file}`;
+      fs.readFile(filePath, (err, data)=>{
+        if(err){
+          console.log('error reading the file'); 
+          return res.status(500).json({error:'Error reading the file'})
+        } 
+        const base64File = data.toString('base64');
+        res.json({...result, file: base64File});
+      })
+    } else {
+      res.status(500).json({ error: "Error al ejecutar la consulta" });
+    }
+  });
 
 // Route POST to grade an assignmentSubmition
 app.post("/grade", authenticateToken, validateAssignmentGrade,  async (req: Request, res: Response) => {

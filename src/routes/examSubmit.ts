@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
+import fs from 'fs';
 dotenv.config();
 const app = express.Router();
 const { authenticateToken } = require("./../models/auth");
@@ -7,11 +8,12 @@ const upload = require("./../models/uploadFile");
 const {
     createExamSubmit,
     getAllSubmitionsByExamId,
-    gradeExam 
+    gradeExam,
+    getExamSubmition,
 } = require("./../models/examSubmitModel");
 import { validateExamSubmit, validateId, ExamSubmit, ExamGrade, validateExamGrade } from "../models/validateExamSubmit";
 import { isUserAuthTo } from "../models/userModel";
-// GET general para obtener todos los submit assigments por examId, 
+// GET general para obtener TODOS los submit assigments por examId, 
 app.get("/byExamId/:id", authenticateToken, validateId, async (req: Request, res: Response) => {
   try {
     const {id} = req.params
@@ -24,6 +26,25 @@ app.get("/byExamId/:id", authenticateToken, validateId, async (req: Request, res
   } catch (error) {
     console.error("Error al mostrar los cursos:", error);
     res.status(500).json({ error: "Error al mostrar los cursos" });
+  }
+});
+
+// Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
+app.get("/:id", validateId,  async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { result, status } = await getExamSubmition(id);
+  if (status) {
+    const filePath = `/tmp/${result.file}`;
+    fs.readFile(filePath, (err, data)=>{
+      if(err){
+        console.log('error reading the file'); 
+        return res.status(500).json({error:'Error reading the file'})
+      } 
+      const base64File = data.toString('base64');
+      res.json({...result, file: base64File});
+    })
+  } else {
+    res.status(500).json({ error: "Error al ejecutar la consulta" });
   }
 });
 

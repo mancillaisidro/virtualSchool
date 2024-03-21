@@ -14,11 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const fs_1 = __importDefault(require("fs"));
 dotenv_1.default.config();
 const app = express_1.default.Router();
 const { authenticateToken } = require("./../models/auth");
 const upload = require("./../models/uploadFile");
-const { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment } = require("./../models/assignmentSubmitModel");
+const { createAssignmentSubmit, getAllSubmitionsByAssignmentId, gradeAssignment, getAssignmentSubmition } = require("./../models/assignmentSubmitModel");
 const validateAssignmentSubmit_1 = require("../models/validateAssignmentSubmit");
 const userModel_1 = require("../models/userModel");
 // GET general para obtener todos los submit assigments por examId, 
@@ -59,6 +60,25 @@ app.post("", upload.single("file"), validateAssignmentSubmit_1.validateAssignmen
     catch (error) {
         console.error("Error al crear un registro:", error);
         res.status(500).json({ error: "Error in POST /assignmentSubmition" });
+    }
+}));
+// Rute to get an exam by its ID, se le debe de mandar un id(del tipo int) como parametro
+app.get("/:id", validateAssignmentSubmit_1.validateId, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { result, status } = yield getAssignmentSubmition(id);
+    if (status) {
+        const filePath = `/tmp/${result.file}`;
+        fs_1.default.readFile(filePath, (err, data) => {
+            if (err) {
+                console.log('error reading the file');
+                return res.status(500).json({ error: 'Error reading the file' });
+            }
+            const base64File = data.toString('base64');
+            res.json(Object.assign(Object.assign({}, result), { file: base64File }));
+        });
+    }
+    else {
+        res.status(500).json({ error: "Error al ejecutar la consulta" });
     }
 }));
 // Route POST to grade an assignmentSubmition
