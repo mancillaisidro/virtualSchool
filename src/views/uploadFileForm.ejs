@@ -6,6 +6,8 @@
   <title>Subir Archivos</title>
 </head>
 <body>
+  <div>
+    <h2>Form to localhost/exam</h2>
     <form action="http://localhost:3000/exam" method="post" enctype="multipart/form-data">
       <input type="text" name="lessonId" id="lessonId" required>
       <label for="lessonId">lesson id</label>
@@ -27,8 +29,10 @@
       <button type="submit">crear Exam</button>
     </form>
     <hr>
-
-    
+  </div>
+   
+  <div>
+    <h2>Form to vercel/exam</h2>
     <form action="https://virtual-school.vercel.app/exam" method="post" enctype="multipart/form-data">
       <input type="text" name="lessonId" id="lessonId" required>
       <label for="lessonId">lesson id</label>
@@ -49,5 +53,56 @@
     
       <button type="submit">crear Exam</button>
     </form>
+    <hr>
+  </div>
+    
+  <div>
+    <h2>Form localhost assignment</h2>
+    <form action="http:3000//localhost/assignment" method="post" enctype="multipart/form-data">
+      <input type="text" name="lessonId" id="lessonId" required>
+      <label for="lessonId">lesson id</label>
+    
+      <input type="text" name="title" id="title" required>
+      <label for="title">title</label>
+    
+      <input type="text" name="description" id="description" required >
+      <label for="description">description</label>
+    
+      <input type="text" name="userId" id="userId" required>
+      <label for="userId">user id</label>
+    
+      <input type="text" name="dueDate" id="dueDate" required>
+      <label for="dueDate">due date</label>
+    
+      <input type="file" name="file" required>
+    
+      <button type="submit">crear Exam</button>
+    </form>
+    <hr>
+  </div>
+    
+    <div>
+      <h2>Form vercel/assignment</h2>
+      <form action="https://virtual-school.vercel.app/assignment" method="post" enctype="multipart/form-data">
+        <input type="text" name="lessonId" id="lessonId" required>
+        <label for="lessonId">lesson id</label>
+      
+        <input type="text" name="title" id="title" required>
+        <label for="title">title</label>
+      
+        <input type="text" name="description" id="description" required >
+        <label for="description">description</label>
+      
+        <input type="text" name="userId" id="userId" required>
+        <label for="userId">user id</label>
+      
+        <input type="text" name="dueDate" id="dueDate" required>
+        <label for="dueDate">due date</label>
+      
+        <input type="file" name="file" required>
+      
+        <button type="submit">crear Exam</button>
+      </form>
+    </div>
 </body>
 </html>
