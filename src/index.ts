@@ -101,6 +101,8 @@ app.put("/json",async (req: Request, res: Response) => {
     return res.status(500).json('something went wrong');
   }
 })
+// route for SEND A EMAIL
+app.use("/sendMailTo", require('./routes/sendMail'));
 
 // definiendo ruta para subir archivo al servidor
 app.use("/virtualschool/uploadLessonFile", require("./routes/uploadFile"));

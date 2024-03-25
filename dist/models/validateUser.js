@@ -8,7 +8,7 @@ const joi_1 = __importDefault(require("joi"));
 const validateUser = (req, res, next) => {
     const userSchema = joi_1.default.object({
         email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
-        name: joi_1.default.string().alphanum().min(3).max(25).required(),
+        name: joi_1.default.string().alphanum().min(5).max(25).required(),
         password: joi_1.default.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         repeat_password: joi_1.default.ref('password'),
         userType: joi_1.default.number().integer().min(0).required()

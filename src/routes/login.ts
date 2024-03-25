@@ -24,7 +24,7 @@ app.post("", validateLogin, async (req: Request<{}, {}, UserLogin>, res: Respons
       // await createCourseMail("Isidro Servin", course, courseId);
       const user = { email: result.mail };
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-      res.json({ id: result.id, email: result.mail, name: result.name, accessToken});
+      res.json({ id: result.id, email: result.mail, userType: result.user_type, name: result.name, accessToken});
     } else {
       res.status(500).json({ error: "Error executing the query" });
     }

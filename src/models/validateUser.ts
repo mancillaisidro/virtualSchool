@@ -4,7 +4,7 @@ import Joi from "joi";
 export const validateUser = (req: Request, res: Response, next: NextFunction) => {
     const userSchema = Joi.object({
         email: Joi.string().email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}}).required(),
-        name: Joi.string().alphanum().min(3).max(25).required(),
+        name: Joi.string().alphanum().min(5).max(25).required(),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         repeat_password: Joi.ref('password'),
         userType: Joi.number().integer().min(0).required()
